@@ -42,7 +42,7 @@ public:
 	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Health_Zero;
 
 	//bool Can_Take_Damage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Change_Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Change_Health = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health"/*, ReplicatedUsing = OnRep_Health*/) FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Health)
