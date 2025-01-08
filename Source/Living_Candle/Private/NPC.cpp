@@ -3,7 +3,7 @@
 
 #include "NPC.h"
 #include "Components/WidgetComponent.h"
-
+//#include "R_BP_FunctionLibrary.h"
 //------------------------------------------------------------------------------------------------------------
 // Sets default values
 ANPC::ANPC()
@@ -19,7 +19,6 @@ ANPC::ANPC()
 void ANPC::BeginPlay()
 {
 	Super::BeginPlay();
-
 
 }
 //------------------------------------------------------------------------------------------------------------
