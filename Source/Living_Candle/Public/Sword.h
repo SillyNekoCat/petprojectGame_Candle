@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Melee_Weapon.h"
-#include "Damage_Interface.h"
+#include "Damage_Interface.h"//
 #include "Knockback_Comp.h"
 #include "Sword.generated.h"
 
+
 class UHeat_Component;
 class UKnockback_Comp;
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_TakeW, FDamage_Inf, bool);
+//DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_TakeW, FDamage_Inf, bool);
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
 class LIVING_CANDLE_API ASword : public AMelee_Weapon, public IDamage_Interface
@@ -21,10 +22,10 @@ public:
 	ASword();
 
 	//function using for calculate melee attack
-	virtual void Check_Hit(TArray <FHitResult> hits_results) override;
+	virtual void Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage) override;
 
 	//
-	virtual void Attack_Trace() override;
+	virtual TArray <UAbilitySystemComponent*> Attack_Trace() override;
 
 	////////////~ Begin IDamage_Interface
 	//handling incoming damage specific to this class
@@ -33,7 +34,7 @@ public:
 
 
 
-	FOnDamage_TakeW OnDamage_TakeWDelegate;
+	//FOnDamage_TakeW OnDamage_TakeWDelegate;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Trace_Radius = 36.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Trace_Complex = false;
@@ -42,15 +43,18 @@ public:
 	
 	//UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf <UDamageType> Impulse_DamageType;
 
-	
+	TArray <UAbilitySystemComponent*> ASCs_ApplyDamage;
 	TArray <AActor*> Damage_Actors;
 	TArray <UPrimitiveComponent*> Hit_Components;
 
-	/**/
+	////////////////////COMPONENTS
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UHeat_Component* Heat_Component;
 
 
-private:
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 
 };

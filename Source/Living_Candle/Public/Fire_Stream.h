@@ -9,8 +9,9 @@
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "Interact_SphereComponent.h"
+#include "Targets_Manager.h"
 #include "Fire_Stream.generated.h"
-
+class UTargets_Manager;
 class UInteract_CapsuleComponent;
 class USceneComponent;
 
@@ -58,11 +59,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_BaseDamage_Info;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_CurrentDamage_Info;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) AActor* Owner_A = nullptr;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
 	/////////////////////Components
-
+	UPROPERTY(BlueprintReadWrite, Category = FireStream) UTargets_Manager* Targets_Manager;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) UInteract_CapsuleComponent * Capsule;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * Start_Point;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * End_Point;

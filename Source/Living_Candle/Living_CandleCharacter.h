@@ -10,19 +10,20 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Base_AttributeSet.h" 
+#include "Attack_AttributeSet.h"
 //#include "PlayerCandle_AttributeSet.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Living_CandleCharacter.generated.h"
-
-class UBase_AttributeSet;
 //class UPlayerCandle_AttributeSet;//
-class UAbilitySystemComponent;//
+class UBase_AttributeSet;
+class UAttack_AttributeSet;
+class UAbilitySystemComponent;
 class UDamage_System_Comp;
 class UWax_System_Comp;
-class UAttack_Comp;
+//class UAttack_Comp;
 class USphereComponent;
 class UInteract_SphereComponent;
 class USpringArmComponent;
@@ -98,8 +99,11 @@ public:
 
 	UPROPERTY(BlueprintReadWrite) UPlayerHUD* PlayerHUD;
 	
+	
+	//////////////////////ATTRIBUTES
 	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
-
+	UPROPERTY(BlueprintReadWrite) const UAttack_AttributeSet* Attack_AttributeSet;
+	
 
 	//////////////////////COMPONENTS
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UDamage_System_Comp* Damage_System_Comp;

@@ -4,6 +4,7 @@
 #include "Heat_Actor.h"
 #include "Heat_Component.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 //------------------------------------------------------------------------------------------------------------
 AHeat_Actor::AHeat_Actor()
@@ -14,6 +15,14 @@ AHeat_Actor::AHeat_Actor()
 	Heat_Component = CreateDefaultSubobject<UHeat_Component>(TEXT("Heat_Component"));								
 	//OnDamage_TakeDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take);//temp old
 	
+	//
+	AbilitySystem_Comp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem_Comp"));
+
+	//
+	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
+
+	//Targets_Manager
+	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
@@ -21,11 +30,25 @@ void AHeat_Actor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Get the appropriate Ability System Component. It could be on another Actor, so use GetAbilitySystemComponent and check that the result is valid.
+	UAbilitySystemComponent* asc = GetAbilitySystemComponent();
+	// Make sure the AbilitySystemComponent is valid. If failure is unacceptable, replace this if() conditional with a check() statement.
+	if (IsValid(asc)) 
+	{
+		// Get the UMyAttributeSet from our Ability System Component. The Ability System Component will create and register one if needed.
+		Base_AttributeSet = asc->GetSet<UBase_AttributeSet>();
+
+		// We now have a pointer to the new UMyAttributeSet that we can use later. If it has an initialization function, this is a good place to call it.
+	}
+
 	////почему-то после изменени€ блюпринта делегат OnCheckHeat_Delegate не срабатывает в блюпринтах, но если перезагрузить уровень то всЄ работает.
 	Check_HeatMelting();
 	
-	OnDamage_TakeDelegate.AddDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
+	//ƒелегат уведомл€ющий об получении урона минимум дл€ Heat_Component
+	//OnDamage_TakeDelegate.AddDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
+	//Base_AttributeSet->On_Damage_Take.AddUniqueDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
 
+	//
 	Start_ActorScale = GetActorRelativeScale3D();//GetActorScale3D();
 
 	//Get collision component only if it exists
@@ -74,12 +97,14 @@ void AHeat_Actor::Tick(float DeltaTime)
 
 }
 //------------------------------------------------------------------------------------------------------------
-//
+
 void AHeat_Actor::Collision_ComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	
 	HeatContact_Damage();
-	if (!CheckContactDamage_TimerHandle.IsValid() )
+	
+	
+	if (!CheckContactDamage_TimerHandle.IsValid() ) 
 		Set_CheckContactDamage_Timer();
 
 }
@@ -87,35 +112,64 @@ void AHeat_Actor::Collision_ComponentBeginOverlap(UPrimitiveComponent* Overlappe
 //
 void AHeat_Actor::Set_CheckContactDamage_Timer()
 {
-		GetWorldTimerManager().SetTimer(CheckContactDamage_TimerHandle, CheckContactDamage_Delegate, ContactCheck_Interval, true, -1.0f);
+	
+	GetWorldTimerManager().SetTimer(CheckContactDamage_TimerHandle, CheckContactDamage_Delegate, ContactCheck_Interval, true, -1.0f);
 	
 }
 //------------------------------------------------------------------------------------------------------------
-//
+//calculate contact fire damage
 void AHeat_Actor::HeatContact_Damage()
 {
-	bool was_damage_applyed;
-	double fire_contact_damage = 0.0;
+	//bool was_damage_applyed;
+	
+	
+
 	TArray<UPrimitiveComponent*> overlapping_components; 
+	TArray <UAbilitySystemComponent*> ascs_apply_damage;
 	
 	GetOverlappingComponents(overlapping_components);
+	
 
 	for (int i = 0; i < overlapping_components.Num(); i++)
 	{
-		if (!Cast<UInteract_SphereComponent>(overlapping_components[i]) && !Cast<UInteract_CapsuleComponent>(overlapping_components[i]) && !Cast<UInteract_BoxComponent>(overlapping_components[i]))
+		if (overlapping_components[i]->GetOwner() == this)
+		{
+			overlapping_components.RemoveSingle(overlapping_components[i]);
+			continue;
+		}
+
+		if (!Cast<UInteract_SphereComponent>(overlapping_components[i]) && !Cast<UInteract_CapsuleComponent>(overlapping_components[i]) && !Cast<UInteract_BoxComponent>(overlapping_components[i]) )
 		{
 			AActor* comp_owner = overlapping_components[i]->GetOwner();
+			
+			
+			Fire_Contact_Damage = Heat_Component->Calculate_HeatContactDamage(comp_owner);
+			
+			
+			if (GEngine && do_once)//debug temp
+			{
+				do_once = false;
+				GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("Fire_Contact_Damage = %f"), Fire_Contact_Damage));
+			}
+				
+			
+			//FDamage_Inf damage_info;
+			//damage_info.Fire_Damage = fire_contact_damage;
 
-			Heat_Component->Calculate_HeatContactDamage(comp_owner, fire_contact_damage);
+			//Apply_Damage(comp_owner, damage_info, was_damage_applyed);
 
-			FDamage_Inf damage_info;
-			damage_info.Fire_Damage = fire_contact_damage;
-
-			Apply_Damage(comp_owner, damage_info, was_damage_applyed);
-
+			//apply damage
+			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(comp_owner))
+			{
+				ascs_apply_damage.Add(asc_damage_actor);	
+				
+				Targets_Manager->Send_Targets(ascs_apply_damage);
+				//Fire_Contact_Damage = 0.0;
+			}
 
 		}
 	}	
+	
 	
 	if(overlapping_components.IsEmpty())
 		Clear_CheckContactDamage_Timer();
@@ -139,15 +193,15 @@ void AHeat_Actor::Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& wa
 	{
 		Cast<IDamage_Interface>(target)->Take_Damage(this, damage_info, was_damage_applyed);
 	}
-
+	//Targets_Manager
 }
 //------------------------------------------------------------------------------------------------------------
 //Processing incoming damage(IDamage_Interface)
 void AHeat_Actor::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bool& was_damaged)
 {
-	damage_info.Fire_Damage = damage_info.Fire_Damage - Fire_Block;
-	if(damage_info.Fire_Damage < 0.0)//validate
-		damage_info.Fire_Damage = 0.0;
+	//damage_info.Fire_Damage = damage_info.Fire_Damage - Fire_Block;
+	//if(damage_info.Fire_Damage < 0.0)//validate
+		//damage_info.Fire_Damage = 0.0;
 
 
 
@@ -160,8 +214,8 @@ void AHeat_Actor::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bo
 	was_damaged = was_damage_taken;
 
 	if(damage_info.Fire_Damage > 0.0)
-		OnDamage_TakeDelegate.Broadcast(damage_info, was_damage_taken);
-
+		//OnDamage_TakeDelegate.Broadcast(damage_info, was_damage_taken);//delete?
+	
 
 	
 	//Check death
@@ -285,7 +339,12 @@ void AHeat_Actor::Correct_Collision(UBoxComponent* collision_comp, FVector scale
 
 	}
 
-	
 
+}
+//------------------------------------------------------------------------------------------------------------
+//
+UAbilitySystemComponent* AHeat_Actor::GetAbilitySystemComponent() const
+{
+	return AbilitySystem_Comp;
 }
 //------------------------------------------------------------------------------------------------------------

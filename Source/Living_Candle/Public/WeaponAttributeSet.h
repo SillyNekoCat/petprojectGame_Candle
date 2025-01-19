@@ -18,5 +18,14 @@ UCLASS()
 class LIVING_CANDLE_API UWeaponAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Phys_Damage = 0.f;
+	ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Phys_Damage)
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Fire_Damage = 0.f;
+	ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Fire_Damage)
+
+
+
 };

@@ -2,6 +2,7 @@
 
 
 #include "Fire_Stream.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -33,6 +34,8 @@ AFire_Stream::AFire_Stream()
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Capsule_BeginOverlap);
 
 
+	//Targets_Manager
+	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
 }
 //------------------------------------------------------------------------------------------------------------
 // ConstructionScript
@@ -109,9 +112,10 @@ void AFire_Stream::Set_Dealing_DamageOverTime_Timer()
 
 }
 //------------------------------------------------------------------------------------------------------------
-// timer function
+// timer function, trace
 void AFire_Stream::Dealing_DamageOverTime()
 {
+	TArray <UAbilitySystemComponent*> ascs_apply_damage;
 
 	TArray <AActor*> damage_actors;
 	TArray <FHitResult> hits_results;
@@ -153,6 +157,15 @@ void AFire_Stream::Dealing_DamageOverTime()
 	{
 		if (damage_actors[i] != nullptr)
 		{
+			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(damage_actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
+			{
+				ascs_apply_damage.Add(asc_damage_actor);
+
+				//Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Weapon_Damage_Spec, asc_damage_actor);
+
+				//Owner_ASC->ApplyGameplayEffectSpecToTarget(*Weapon_Damage_Spec.Data, asc_damage_actor);//crash
+			}
+
 			if (damage_actors[i]->Implements<UDamage_Interface>() )
 			{
 
@@ -161,6 +174,8 @@ void AFire_Stream::Dealing_DamageOverTime()
 			}
 		}
 	}
+	//Send targets to apply damage
+	Targets_Manager->Send_Targets(ascs_apply_damage);
 
 	Capsule->GetOverlappingActors(Overlapping_Actors);
 

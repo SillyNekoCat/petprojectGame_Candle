@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UInteract_CapsuleComponent : public UCapsuleComponent
 {
 	GENERATED_BODY()

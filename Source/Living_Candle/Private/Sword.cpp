@@ -6,6 +6,7 @@
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "Interact_SphereComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 
 //------------------------------------------------------------------------------------------------------------
@@ -14,15 +15,29 @@ ASword::ASword()
 {
 
 	Heat_Component = CreateDefaultSubobject<UHeat_Component>(TEXT("Heat_Component"));
-	OnDamage_TakeWDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take);
-
+	//OnDamage_TakeWDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take); 
 	Knockback_Comp = CreateDefaultSubobject<UKnockback_Comp>(TEXT("Knockback_Comp"));
 
 
 }
+
+//------------------------------------------------------------------------------------------------------------
+//
+void ASword::BeginPlay()
+{
+	Super::BeginPlay();
+
+	//Correct call from parent
+	//AMelee_Weapon::DispatchBeginPlay();
+	//AMelee_Weapon::BeginPlay();
+
+	//Делегат уведомляющий об получении урона минимум для Heat_Component
+	//Base_AttributeSet->On_Damage_Take.AddDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
+
+}
 //------------------------------------------------------------------------------------------------------------
 //function using for calculate and validate melee attack
-void ASword::Check_Hit(TArray <FHitResult> hits_results)
+void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
 {
 	FDamage_Inf current_damage = Weapon_CurrentDamage_Info;//Без этого будет неправильный урон
 	
@@ -70,19 +85,31 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results)
 
 
 	}
-	//Apply damage
+
+	////Apply damage
 	for (int i = 0; i < Damage_Actors.Num() ; i++) 
 	{
 		if (Damage_Actors[i] != nullptr && !Last_Touched_Actors.Contains(Damage_Actors[i]) )//Один удар за атаку
 		{
+			
+			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
+			{
+				ASCs_ApplyDamage.Add(asc_damage_actor);
+
+				//Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Weapon_Damage_Spec, asc_damage_actor);
+				
+				//Owner_ASC->ApplyGameplayEffectSpecToTarget(*Weapon_Damage_Spec.Data, asc_damage_actor);//crash
+			}
+
 			if (Damage_Actors[i]->Implements<UDamage_Interface>() )
 			{
 				
 				if (Heat_Component->Accumulated_Heat != 0.0)//если оружие нагрето, то будет дополнительный урон от огня.
-					Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i], current_damage.Fire_Damage);
+					current_damage.Fire_Damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
 
 				Cast<IDamage_Interface>(Damage_Actors[i])->Take_Damage(Owner_Of_Weapon, current_damage, Was_Weapon_Damage_Applyed);
 			}
+
 		}
 		
 	}
@@ -105,17 +132,20 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results)
 	Last_Touched_Actors = Damage_Actors;
 	Last_Touched_Comps = Hit_Components;
 
+	ascs_apply_damage = ASCs_ApplyDamage;
+
 	Damage_Actors.Empty();
 	Hit_Components.Empty();
-
+	ASCs_ApplyDamage.Empty();
 	
 }
 //------------------------------------------------------------------------------------------------------------
-//Looping function using for melee attack
-void ASword::Attack_Trace()
+//Looping function using for melee attack, getting targets from trace result
+TArray <UAbilitySystemComponent*> ASword::Attack_Trace()
 {
 	//FHitResult hit_result;
 	TArray <FHitResult> hits_results;
+	TArray <UAbilitySystemComponent*> ascs;
 
 	if(Weapon_Trace_Debug == false)
 	{
@@ -133,8 +163,8 @@ void ASword::Attack_Trace()
 	}
 
 
-	Check_Hit(hits_results);
-
+	Check_Hit(hits_results, ascs);
+	return ascs;
 }
 //------------------------------------------------------------------------------------------------------------
 //Handling incoming damage specific to this class (IDamage_Interface)
@@ -152,7 +182,7 @@ void ASword::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bool& w
 
 	was_damaged = was_damage_taken;
 
-	OnDamage_TakeWDelegate.Broadcast(damage_info, was_damage_taken);
+	//OnDamage_TakeWDelegate.Broadcast(damage_info, was_damage_taken);
 
 	//Heat_Component->HeatDamage_Take(damage_info, was_damage_taken); можно сделать проще без делегата
 

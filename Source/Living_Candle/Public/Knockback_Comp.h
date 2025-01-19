@@ -7,7 +7,7 @@
 #include "Knockback_Comp.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UKnockback_Comp : public UActorComponent
 {
 	GENERATED_BODY()

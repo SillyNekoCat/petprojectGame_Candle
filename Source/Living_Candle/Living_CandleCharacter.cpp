@@ -78,11 +78,12 @@ ALiving_CandleCharacter::ALiving_CandleCharacter()
 	//
 	AbilitySystem_Comp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem_Comp"));
 
-	//
+	//Attributes
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
+	Attack_AttributeSet = CreateDefaultSubobject<UAttack_AttributeSet>(TEXT("Attack_AttributeSet"));
 
 	//Attack_Comp
-	Attack_Comp = CreateDefaultSubobject<UAttack_Comp>(TEXT("Attack_Comp"));
+	//Attack_Comp = CreateDefaultSubobject<UAttack_Comp>(TEXT("Attack_Comp"));
 
 	//Damage_System_Comp
 	Damage_System_Comp = CreateDefaultSubobject<UDamage_System_Comp>(TEXT("Damage_System_Comp"));
@@ -94,16 +95,19 @@ void ALiving_CandleCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	// Get the appropriate Ability System Component. It could be on another Actor, so use GetAbilitySystemComponent and check that the result is valid.
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponent();
+	UAbilitySystemComponent* asc = GetAbilitySystemComponent();
 	// Make sure the AbilitySystemComponent is valid. If failure is unacceptable, replace this if() conditional with a check() statement.
-	if (IsValid(ASC)) 
+	if (IsValid(asc)) 
 	{
 		// Get the UMyAttributeSet from our Ability System Component. The Ability System Component will create and register one if needed.
-		Base_AttributeSet = ASC->GetSet<UBase_AttributeSet>();
-
+		Base_AttributeSet = asc->GetSet<UBase_AttributeSet>();
+		Attack_AttributeSet = asc->GetSet<UAttack_AttributeSet>();
 		// We now have a pointer to the new UMyAttributeSet that we can use later. If it has an initialization function, this is a good place to call it.
 	}
 	
+	//Attack_Comp
+	Attack_Comp = GetComponentByClass<UAttack_Comp>();
+
 	if (UPlayerHUD* playerhud = Cast<UPlayerHUD>(Player_Widget_HUD->GetUserWidgetObject()) )
 	{
 		PlayerHUD = playerhud;
@@ -348,7 +352,7 @@ void ALiving_CandleCharacter::Pickup_Weapon(AMelee_Weapon* weapon)
 	Have_Weapon = true;
 	
 	////Modify weapon (legacy?? now need use ability system)
-	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Phys_Damage = (Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Phys_Damage + Base_AttributeSet->GetAdded_Physical_Damage()) * Base_AttributeSet->GetPhysical_Damage_Multiplier();//modify with Passive tree component
+	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Phys_Damage = (Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Phys_Damage + Attack_AttributeSet->GetAdded_Physical_Damage()) * Attack_AttributeSet->GetPhysical_Damage_Multiplier();//modify with Passive tree component
 	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Fire_Damage = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Fire_Damage * 1.0;
 	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Knockback = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Knockback * 1.0;
 	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Stun = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Stun * 1.0;

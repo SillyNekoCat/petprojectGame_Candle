@@ -8,7 +8,7 @@
 #include "Wax_System_Comp.generated.h"
 
 //------------------------------------------------------------------------------------------------------------
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UWax_System_Comp : public UActorComponent
 {
 	GENERATED_BODY()

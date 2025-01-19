@@ -8,7 +8,7 @@
 #include "Attack_Comp.generated.h"
 
 //------------------------------------------------------------------------------------------------------------
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
 class LIVING_CANDLE_API UAttack_Comp : public UActorComponent
 {
 	GENERATED_BODY()
@@ -21,8 +21,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable) void OnMaxCombo_Reset_Index();
-	
-	UFUNCTION(BlueprintCallable) void NotifyState_Tracing_Attack();
 
 	UPROPERTY(BlueprintReadWrite) bool Can_Attack = true;
 

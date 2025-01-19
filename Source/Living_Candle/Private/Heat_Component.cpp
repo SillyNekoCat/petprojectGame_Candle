@@ -23,7 +23,7 @@ UHeat_Component::UHeat_Component()
 void UHeat_Component::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	////Set overlay material for all meshes
 	if (Can_Heat == true)
 	{
@@ -112,15 +112,16 @@ void UHeat_Component::Retriggerable_Cooling_Delay()
 }
 //------------------------------------------------------------------------------------------------------------
 //
-void UHeat_Component::Calculate_HeatContactDamage(AActor *target, double &contact_damage)
+double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 {
+
 	double contact_dam = 0;
 
 	for (int i = 0; i < Ignore_Actors.Num() ; i++) 
 	{
 		if (Ignore_Actors.Contains(target->GetClass()))//target->StaticClass()
 		{
-			return;
+			return contact_dam;
 		}
 	}
 
@@ -130,10 +131,15 @@ void UHeat_Component::Calculate_HeatContactDamage(AActor *target, double &contac
 		{
 			if (same_comp->Heat_Status_Param < Heat_Status_Param)
 			{
-				
+						
+
 				contact_dam = (Accumulated_Heat - same_comp->Accumulated_Heat) * Give_PartOfHeat_HaveHeatComp;
 				
-				//Heat_Lose(contact_dam);
+				//GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("contact_dam = %f"), contact_dam));//debug temp
+				
+				Heat_Lose(contact_dam);
+				//return contact_dam;
+				
 
 			}
 		}
@@ -156,20 +162,25 @@ void UHeat_Component::Calculate_HeatContactDamage(AActor *target, double &contac
 			contact_dam = Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp;
 		}
 		
-		//Heat_Lose(contact_dam); 
+		Heat_Lose(contact_dam); 
 
 	}
 
-	Heat_Lose(contact_dam);
-	contact_damage = contact_dam;
+	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("contact_dam = %f"), contact_dam));//debug temp
+	//Heat_Lose(contact_dam);
+	return contact_dam;
 
 }
 //------------------------------------------------------------------------------------------------------------
 //Call when owner take fire damage
-void UHeat_Component::HeatDamage_Take(FDamage_Inf damage_info, bool was_owner_damaged)
+void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FGameplayTag DamageTag, float Damage, float OldValue, float NewValue)
 {
 
-	double fire_damage_taken = damage_info.Fire_Damage;
+	//double fire_damage_taken = damage_info.Fire_Damage;
+	if( !DamageTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))) )
+		return;//continue only if damage type is fire
+
+	double fire_damage_taken = Damage;
 	if(fire_damage_taken <= 0.0)
 	{
 		fire_damage_taken = 0.0;
@@ -178,7 +189,7 @@ void UHeat_Component::HeatDamage_Take(FDamage_Inf damage_info, bool was_owner_da
 
 	GetOwner()->GetWorldTimerManager().ClearTimer(CoolingTimer_Handle);
 
-	Accumulated_Heat = Accumulated_Heat + damage_info.Fire_Damage;
+	Accumulated_Heat = Accumulated_Heat + Damage;
 	//validate 
 	if (Accumulated_Heat > Max_Accumulated_Heat)
 		Accumulated_Heat = Max_Accumulated_Heat;
@@ -196,7 +207,7 @@ void UHeat_Component::HeatDamage_Take(FDamage_Inf damage_info, bool was_owner_da
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
 
 
-
+	//
 	GetOwner()->GetWorldTimerManager().SetTimer(RetriggCoolingDelay_Handle, RetriggCoolingDelay_Delegate, Cooling_Setup_Delay, false, -1.0f);
 }
 //------------------------------------------------------------------------------------------------------------

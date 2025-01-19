@@ -8,7 +8,7 @@
 #include "Damage_System_Comp.generated.h"
 //------------------------------------------------------------------------------------------------------------
 //This component helps with using c++ interface and other tasks...
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UDamage_System_Comp : public UActorComponent
 {//This component helps with using c++ interface and other tasks... Это компонент для взаимодействия с С++ интерфейсом
 	GENERATED_BODY()

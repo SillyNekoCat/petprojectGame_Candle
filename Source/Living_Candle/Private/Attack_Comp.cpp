@@ -37,17 +37,3 @@ void UAttack_Comp::OnMaxCombo_Reset_Index()
 		Attack_Index = 0;
 }
 //------------------------------------------------------------------------------------------------------------
-// 
-void UAttack_Comp::NotifyState_Tracing_Attack()
-{
-	if (Current_Weapon != nullptr)
-	{
-		Current_Weapon->Attack_Trace();
-	}
-	else//for example empty hands
-	{
-
-	}
-		
-}
-//------------------------------------------------------------------------------------------------------------

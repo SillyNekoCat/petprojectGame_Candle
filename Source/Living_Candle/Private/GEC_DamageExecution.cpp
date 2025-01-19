@@ -73,9 +73,9 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//float base_fire_damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), false, -1.0f), 0.0f);
 	//float base_pure_damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure")), false, -1.0f), 0.0f);
 
-	float base_phys_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), false, -1.0f);
-	float base_fire_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), false, -1.0f);
-	float base_pure_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure")), false, -1.0f);
+	float base_phys_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), true, 0.0f);
+	float base_fire_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), true, 0.0f);
+	float base_pure_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure")), true, 0.0f);
 
 	//Capturing Block attributes
 	float phys_block = 0.f;
@@ -117,9 +117,9 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UBase_AttributeSet::GetIncoming_Fire_DamageAttribute(), EGameplayModOp::Additive, -fire_damage_done));
 	//OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UBase_AttributeSet::GetIncoming_Pure_DamageAttribute(), EGameplayModOp::Additive, -base_pure_damage));
 	
-	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Phys_DamageProperty, EGameplayModOp::Additive, -phys_damage_done));
-	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Fire_DamageProperty, EGameplayModOp::Additive, -fire_damage_done));
-	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Pure_DamageProperty, EGameplayModOp::Additive, -base_pure_damage));
+	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Phys_DamageProperty, EGameplayModOp::Additive, phys_damage_done));
+	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Fire_DamageProperty, EGameplayModOp::Additive, fire_damage_done));
+	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Pure_DamageProperty, EGameplayModOp::Additive, base_pure_damage));
 
 }
 //------------------------------------------------------------------------------------------------------------

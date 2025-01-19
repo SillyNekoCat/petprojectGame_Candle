@@ -4,7 +4,7 @@
 #include "Melee_Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Interact_SphereComponent.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 
 //------------------------------------------------------------------------------------------------------------
 // Sets default values
@@ -13,7 +13,7 @@ AMelee_Weapon::AMelee_Weapon()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 
-	Revert_Weapon_Damage_Info();
+	//Revert_Weapon_Damage_Info();
 
 	Weapon_Skeletal_Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon_Skeletal_Mesh"));
 
@@ -21,6 +21,13 @@ AMelee_Weapon::AMelee_Weapon()
 	//Weapon_Pickup_Sphere->SetSphereRadius(10.f);
 	Weapon_Pickup_Sphere->SetupAttachment(Weapon_Skeletal_Mesh);
 
+	//
+	Weapon_AbilitySystemComp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Weapon_AbilitySystemComp"));
+
+	//
+	Weapon_AttributeSet = CreateDefaultSubobject<UWeaponAttributeSet>(TEXT("Weapon_AttributeSet"));
+	//
+	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
@@ -36,6 +43,15 @@ void AMelee_Weapon::BeginPlay()
 	(Weapon_BaseDamage_Info.Phys_Damage, Weapon_BaseDamage_Info.Fire_Damage, Weapon_BaseDamage_Info.Knockback, Weapon_BaseDamage_Info.Stun);
 
 	Knockback_Comp = GetComponentByClass<UKnockback_Comp>();
+
+	//
+	if (IsValid(Weapon_AbilitySystemComp)) 
+	{
+		// Get the UMyAttributeSet from our Ability System Component. The Ability System Component will create and register one if needed.
+		Weapon_AttributeSet = Weapon_AbilitySystemComp->GetSet<UWeaponAttributeSet>();
+		Base_AttributeSet = Weapon_AbilitySystemComp->GetSet<UBase_AttributeSet>();
+		// We now have a pointer to the new UMyAttributeSet that we can use later. If it has an initialization function, this is a good place to call it.
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 //Event OnComponentBeginOverlap
@@ -50,11 +66,11 @@ void AMelee_Weapon::Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* Overlap
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Weapon_Hit_Capsule_BeginOverlap"));
 }
 //------------------------------------------------------------------------------------------------------------
-//Looping timer function using for trace
-void AMelee_Weapon::Attack_Trace()
+//Call trace method, than validate and convert result of trace to damage targets
+TArray <UAbilitySystemComponent*> AMelee_Weapon::Attack_Trace()
 {
-
-
+	TArray <UAbilitySystemComponent*> ascs;
+	return ascs;
 }
 //------------------------------------------------------------------------------------------------------------
 //timer function
@@ -84,10 +100,13 @@ void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_own
 	AttachToComponent(arms_mesh, attachment_rules, FName(TEXT("Weapon_Socket")));
 
 	Owner_Of_Weapon = weapon_owner;
+	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
+	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
 	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
 
+	//Spec принадлежит владельцу оружия
+	Weapon_Damage_Spec = Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0.0f, Owner_ASC->MakeEffectContext());
 	//Изменяем базовые значения оружия
-
 }
 //------------------------------------------------------------------------------------------------------------
 //
@@ -110,6 +129,7 @@ void AMelee_Weapon::Detach()
 
 	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
 	Owner_Of_Weapon = nullptr;
+	Owner_ASC = nullptr;
 
 	//Восстанавливаем базовые значения оружия
 	Revert_Weapon_Damage_Info();
@@ -144,7 +164,7 @@ void AMelee_Weapon::Disable_Attack_Trace()
 }
 //------------------------------------------------------------------------------------------------------------
 //function using for calculate melee attack
-void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
+void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
 {
 
 }
@@ -152,20 +172,36 @@ void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 //Revert Weapon_CurrentDamage_Info to base values Weapon_BaseDamage_Info
 void AMelee_Weapon::Revert_Weapon_Damage_Info()
 {
-	Weapon_CurrentDamage_Info.Phys_Damage = Weapon_BaseDamage_Info.Phys_Damage;
-	Weapon_CurrentDamage_Info.Fire_Damage = Weapon_BaseDamage_Info.Fire_Damage;
-	Weapon_CurrentDamage_Info.Knockback = Weapon_BaseDamage_Info.Knockback;
-	Weapon_CurrentDamage_Info.Stun = Weapon_BaseDamage_Info.Stun;
+	//Weapon_CurrentDamage_Info.Phys_Damage = Weapon_BaseDamage_Info.Phys_Damage;
+	//Weapon_CurrentDamage_Info.Fire_Damage = Weapon_BaseDamage_Info.Fire_Damage;
+	//Weapon_CurrentDamage_Info.Knockback = Weapon_BaseDamage_Info.Knockback;
+	//Weapon_CurrentDamage_Info.Stun = Weapon_BaseDamage_Info.Stun;
+
+	
+	
+	if (!Weapon_Damage_Spec.IsValid())
+	{
+		return;
+	}
+	
+	//Base phys damage
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->Phys_Damage.GetBaseValue() ); 
+	//Base fire damage
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->Fire_Damage.GetBaseValue() ); 
+
 	
 }
 //------------------------------------------------------------------------------------------------------------
 //Change Weapon_BaseDamage_Info
 void AMelee_Weapon::Set_Weapon_BaseDamage_Info(double phys, double fire, double knockback, double stun)
 {
+
+
 	if (phys == 0.0)
 	{	}//nothing changes
 	else
 	{
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), phys); 
 		Weapon_BaseDamage_Info.Phys_Damage = phys;
 	}
 
@@ -173,6 +209,7 @@ void AMelee_Weapon::Set_Weapon_BaseDamage_Info(double phys, double fire, double 
 	{	}//nothing changes
 	else
 	{
+
 		Weapon_BaseDamage_Info.Fire_Damage = fire;
 	}
 
@@ -214,6 +251,7 @@ void AMelee_Weapon::Modify_Weapon_CurrentDamage_Info(double phys, double fire, d
 	{
 		Weapon_CurrentDamage_Info.Fire_Damage = fire;
 	}
+	
 
 	if (knockback == 0.0)
 	{	}//nothing changes
@@ -237,3 +275,10 @@ void AMelee_Weapon::Modify_Weapon_CurrentDamage_Info(double phys, double fire, d
 
 }
 //------------------------------------------------------------------------------------------------------------
+//
+UAbilitySystemComponent* AMelee_Weapon::GetAbilitySystemComponent() const 
+{
+	return Weapon_AbilitySystemComp;
+}
+//------------------------------------------------------------------------------------------------------------
+

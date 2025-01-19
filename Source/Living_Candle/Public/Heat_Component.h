@@ -4,13 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "GenericStructs.h"
+//#include "GenericStructs.h"
+#include "AbilitySystemComponent.h"
+#include "Base_AttributeSet.h" 
 #include "Heat_Component.generated.h"
 
 
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UHeat_Component : public UActorComponent
 {
 	GENERATED_BODY()
@@ -23,11 +25,11 @@ public:
 	UFUNCTION() void Cooling_Timer();
 	UFUNCTION() void Retriggerable_Cooling_Delay();                    
 
-	UFUNCTION() void Calculate_HeatContactDamage(AActor *target, double &contact_damage);
+	UFUNCTION(BlueprintCallable) double Calculate_HeatContactDamage(AActor *target);
 	
 	
 
-	UFUNCTION() void HeatDamage_Take(FDamage_Inf damage_inf, bool was_owner_damaged);//Call from delegate when we take fire damage
+	UFUNCTION(BlueprintCallable) void HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FGameplayTag DamageTag, float Damage, float OldValue, float NewValue);//Call from delegate when we take fire damage
 	void Heat_Lose(double damage);
 
 	UFUNCTION(BlueprintCallable) void Calculate_MaxHeat();

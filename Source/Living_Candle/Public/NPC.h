@@ -4,14 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Damage_Interface.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
+#include "Base_AttributeSet.h" 
 #include "GameFramework/Character.h"
 #include "NPC.generated.h"
-
+class UBase_AttributeSet;
+class UAbilitySystemComponent;
 class UWidgetComponent;
 
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
-class LIVING_CANDLE_API ANPC : public ACharacter, public IDamage_Interface
+class LIVING_CANDLE_API ANPC : public ACharacter, public IDamage_Interface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -26,9 +30,17 @@ public:
 	virtual void Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged) override;
 	////////////~ End IDamage_Interface
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;
+	////////////~ Begin IAbilitySystemInterface
+	// Returns our Ability System Component. 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	////////////~ End IAbilitySystemInterface
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;//DELETE
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;//DELETE
+
+	////////////Components
+	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UWidgetComponent* Widget_Component;
 
 protected:

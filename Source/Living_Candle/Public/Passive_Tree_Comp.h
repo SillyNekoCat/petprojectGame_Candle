@@ -62,7 +62,7 @@ public:
 
 };
 //------------------------------------------------------------------------------------------------------------
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UPassive_Tree_Comp : public UActorComponent
 {
 	GENERATED_BODY()
