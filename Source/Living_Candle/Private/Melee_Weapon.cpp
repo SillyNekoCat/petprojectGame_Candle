@@ -28,6 +28,9 @@ AMelee_Weapon::AMelee_Weapon()
 	Weapon_AttributeSet = CreateDefaultSubobject<UWeaponAttributeSet>(TEXT("Weapon_AttributeSet"));
 	//
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
+
+	//Targets_Manager
+	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
@@ -64,13 +67,6 @@ void AMelee_Weapon::Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* Overlap
 		//Check_Hit(SweepResult);
 		
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Weapon_Hit_Capsule_BeginOverlap"));
-}
-//------------------------------------------------------------------------------------------------------------
-//Call trace method, than validate and convert result of trace to damage targets
-TArray <UAbilitySystemComponent*> AMelee_Weapon::Attack_Trace()
-{
-	TArray <UAbilitySystemComponent*> ascs;
-	return ascs;
 }
 //------------------------------------------------------------------------------------------------------------
 //timer function
@@ -163,10 +159,17 @@ void AMelee_Weapon::Disable_Attack_Trace()
 
 }
 //------------------------------------------------------------------------------------------------------------
-//function using for calculate melee attack
+//validate result of trace, using him as parameter for delegate call On_SendTargets.
 void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
 {
 
+}
+//------------------------------------------------------------------------------------------------------------
+//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
+TArray <UAbilitySystemComponent*> AMelee_Weapon::Attack_Trace()
+{
+	TArray <UAbilitySystemComponent*> ascs;
+	return ascs;
 }
 //------------------------------------------------------------------------------------------------------------
 //Revert Weapon_CurrentDamage_Info to base values Weapon_BaseDamage_Info

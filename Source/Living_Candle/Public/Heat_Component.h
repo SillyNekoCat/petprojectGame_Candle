@@ -43,6 +43,10 @@ public:
 	UMaterialInstanceDynamic *Mat_Heat_Inst = 0;
 	//UPROPERTY(BlueprintReadWrite) TArray<AActor*> Overlapped_Actors;
 
+
+	////DEBUG
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Debug = false;
+
 	//Is_Give_PartOfMaxHeat
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Give_PartOfMaxHeat = false;
 	//DamageIfTarget_NotHave_HeatComp
@@ -51,6 +55,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool DamageIfTarget_Have_HeatComp = true;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Can_Heat = true;
 	//UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Can_KnockBack = false;
+
+	//Need to acces returned Calculate_HeatContactDamage value in BP
+	UPROPERTY(BlueprintReadOnly) double Last_FireContactDamage;
 
 	//(0-1) using as parameter in material instance, 1 means that it has maximum heating
 	UPROPERTY(BlueprintReadOnly) double Heat_Status_Param = 0.0;

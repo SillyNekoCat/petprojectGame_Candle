@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GenericStructs.h"
 //#include "Damage_Interface.h"
+#include "Targets_Manager.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "WeaponAttributeSet.h"
@@ -15,6 +16,8 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Melee_Weapon.generated.h"
+
+class UTargets_Manager;
 class UAbilitySystemComponent;
 class UWeaponAttributeSet;
 class UBase_AttributeSet;
@@ -32,8 +35,7 @@ public:
 
 	UFUNCTION() virtual void Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	//Looping function using for trace, need to extend or override in child classes
-	UFUNCTION(BlueprintCallable) virtual TArray <UAbilitySystemComponent*> Attack_Trace(); 
+
 
 	//UFUNCTION() void AttackTrace_Duration();
 
@@ -42,8 +44,11 @@ public:
 	UFUNCTION(BlueprintCallable) virtual void Enable_Attack_Trace();
 	UFUNCTION(BlueprintCallable) virtual void Disable_Attack_Trace();
 
-	//function using for calculate melee attack
+	//validate result of trace, using him as parameter for delegate call On_SendTargets.
 	UFUNCTION(BlueprintCallable) virtual void Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage);
+	//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
+	UFUNCTION(BlueprintCallable) virtual TArray <UAbilitySystemComponent*> Attack_Trace(); 
+
 	//Revert base values to Weapon_Damage_Info
 	UFUNCTION(BlueprintCallable) virtual void Revert_Weapon_Damage_Info();
 	//Apply Modified_ damage variables to Weapon_Damage_Info
@@ -94,8 +99,9 @@ public:
 
 	
 	///////////////COMPONENTS
-	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
-	UPROPERTY(BlueprintReadWrite) const UWeaponAttributeSet* Weapon_AttributeSet;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Melee_Weapon) UTargets_Manager* Targets_Manager;
+	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UBase_AttributeSet* Base_AttributeSet;
+	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UWeaponAttributeSet* Weapon_AttributeSet;
 	
 	//UKnockback_Comp reference if it exist
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UKnockback_Comp* Knockback_Comp;

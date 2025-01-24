@@ -36,7 +36,7 @@ void ASword::BeginPlay()
 
 }
 //------------------------------------------------------------------------------------------------------------
-//function using for calculate and validate melee attack
+//validate result of trace, using him as parameter for delegate call On_SendTargets.
 void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
 {
 	FDamage_Inf current_damage = Weapon_CurrentDamage_Info;//Без этого будет неправильный урон
@@ -94,21 +94,23 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemC
 			
 			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
 			{
-				ASCs_ApplyDamage.Add(asc_damage_actor);
+				//ASCs_ApplyDamage.Add(asc_damage_actor);
+				Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
 
-				//Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Weapon_Damage_Spec, asc_damage_actor);
-				
-				//Owner_ASC->ApplyGameplayEffectSpecToTarget(*Weapon_Damage_Spec.Data, asc_damage_actor);//crash
+				Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
+				//Тут должен вызыватся делегат из таргет компонента
+
+
 			}
 
-			if (Damage_Actors[i]->Implements<UDamage_Interface>() )
-			{
-				
-				if (Heat_Component->Accumulated_Heat != 0.0)//если оружие нагрето, то будет дополнительный урон от огня.
-					current_damage.Fire_Damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
+			//if (Damage_Actors[i]->Implements<UDamage_Interface>() )//old
+			//{
+			//	
+			//	if (Heat_Component->Accumulated_Heat != 0.0)//если оружие нагрето, то будет дополнительный урон от огня.
+			//		current_damage.Fire_Damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
 
-				Cast<IDamage_Interface>(Damage_Actors[i])->Take_Damage(Owner_Of_Weapon, current_damage, Was_Weapon_Damage_Applyed);
-			}
+			//	Cast<IDamage_Interface>(Damage_Actors[i])->Take_Damage(Owner_Of_Weapon, current_damage, Was_Weapon_Damage_Applyed);
+			//}
 
 		}
 		
@@ -140,7 +142,7 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemC
 	
 }
 //------------------------------------------------------------------------------------------------------------
-//Looping function using for melee attack, getting targets from trace result
+//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
 TArray <UAbilitySystemComponent*> ASword::Attack_Trace()
 {
 	//FHitResult hit_result;

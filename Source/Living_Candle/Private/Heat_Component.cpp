@@ -115,13 +115,13 @@ void UHeat_Component::Retriggerable_Cooling_Delay()
 double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 {
 
-	double contact_dam = 0;
+	Last_FireContactDamage = 0;
 
-	for (int i = 0; i < Ignore_Actors.Num() ; i++) 
+	for (int i = 0; i < Ignore_Actors.Num() ; i++) //ignored actors
 	{
-		if (Ignore_Actors.Contains(target->GetClass()))//target->StaticClass()
+		if (Ignore_Actors.Contains(target->GetClass()) )
 		{
-			return contact_dam;
+			return Last_FireContactDamage;
 		}
 	}
 
@@ -133,12 +133,12 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 			{
 						
 
-				contact_dam = (Accumulated_Heat - same_comp->Accumulated_Heat) * Give_PartOfHeat_HaveHeatComp;
+				Last_FireContactDamage = (Accumulated_Heat - same_comp->Accumulated_Heat) * Give_PartOfHeat_HaveHeatComp;
 				
-				//GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("contact_dam = %f"), contact_dam));//debug temp
+				//GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("Last_FireContactDamage = %f"), Last_FireContactDamage));//debug temp
 				
-				Heat_Lose(contact_dam);
-				//return contact_dam;
+				Heat_Lose(Last_FireContactDamage);
+				//return Last_FireContactDamage;
 				
 
 			}
@@ -150,25 +150,29 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 		{
 			if (Accumulated_Heat <= Max_Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp)
 			{
-				contact_dam = Accumulated_Heat;
+				Last_FireContactDamage = Accumulated_Heat;
 			}
 			else
 			{
-				contact_dam =  Max_Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp;
+				Last_FireContactDamage =  Max_Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp;
 			}
 		}
 		else 
 		{
-			contact_dam = Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp;
+			Last_FireContactDamage = Accumulated_Heat * Give_PartOfHeat_NotHaveHeatComp;
 		}
 		
-		Heat_Lose(contact_dam); 
+		Heat_Lose(Last_FireContactDamage); 
 
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("contact_dam = %f"), contact_dam));//debug temp
-	//Heat_Lose(contact_dam);
-	return contact_dam;
+	
+	//DEBUG
+	if(Debug)
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("UHeat_Component::Calculate_HeatContactDamage Last_FireContactDamage = %f"), Last_FireContactDamage));//debug temp
+	
+	
+	//Heat_Lose(Last_FireContactDamage);
+	return Last_FireContactDamage;
 
 }
 //------------------------------------------------------------------------------------------------------------

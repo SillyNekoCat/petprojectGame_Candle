@@ -41,7 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable) void Clear_CheckContactDamage_Timer();
 	
 
-	UFUNCTION(BlueprintCallable) void Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& was_damage_applyed);
+	//UFUNCTION(BlueprintCallable) void Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& was_damage_applyed); 
 
 
 	////////////~ Begin IDamage_Interface
@@ -61,7 +61,10 @@ public:
 	FVector Get_Shape_Value(UBoxComponent* collision_comp);
 	void Correct_Collision(UBoxComponent* collision_comp, FVector scale);//Корректирует компонент коллизии после скейла в зависимости от его типа. 
 
-	bool do_once = true;//debug temp delete
+	//using for debug
+	bool do_once = true;
+	////DEBUG
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Debug = false;
 
 	
 	FVector Start_BoxExtent;
@@ -78,8 +81,7 @@ public:
 	// 
 	//Need for level scripting or...
 	UPROPERTY(BlueprintAssignable) FOnCheck_Heat OnCheckHeat_Delegate;
-	//Need for HeatContact_Damage
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Fire_Contact_Damage;
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Can_Melting = false; 
 

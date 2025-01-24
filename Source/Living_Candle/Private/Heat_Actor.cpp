@@ -122,10 +122,8 @@ void AHeat_Actor::HeatContact_Damage()
 {
 	//bool was_damage_applyed;
 	
-	
-
 	TArray<UPrimitiveComponent*> overlapping_components; 
-	TArray <UAbilitySystemComponent*> ascs_apply_damage;
+	//TArray <UAbilitySystemComponent*> ascs_apply_damage; 
 	
 	GetOverlappingComponents(overlapping_components);
 	
@@ -143,13 +141,16 @@ void AHeat_Actor::HeatContact_Damage()
 			AActor* comp_owner = overlapping_components[i]->GetOwner();
 			
 			
-			Fire_Contact_Damage = Heat_Component->Calculate_HeatContactDamage(comp_owner);
+			Heat_Component->Calculate_HeatContactDamage(comp_owner);
 			
-			
-			if (GEngine && do_once)//debug temp
+			////DEBUG
+			if(Debug)
 			{
-				do_once = false;
-				GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("Fire_Contact_Damage = %f"), Fire_Contact_Damage));
+				if (GEngine && do_once)
+				{
+					do_once = false;
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("AHeat_Actor::HeatContact_Damage() Last_FireContactDamage = %f"), Heat_Component->Last_FireContactDamage));
+				}
 			}
 				
 			
@@ -161,17 +162,20 @@ void AHeat_Actor::HeatContact_Damage()
 			//apply damage
 			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(comp_owner))
 			{
-				ascs_apply_damage.Add(asc_damage_actor);	
+				//TArray <UAbilitySystemComponent*> ascs_apply_damage; 
+				//ascs_apply_damage.Add(asc_damage_actor);	
 				
-				Targets_Manager->Send_Targets(ascs_apply_damage);
-				//Fire_Contact_Damage = 0.0;
+				//Targets_Manager->Send_Targets(ascs_apply_damage);
+				Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
+				//Last_FireContactDamage = 0.0;
 			}
 
 		}
 	}	
 	
 	
-	if(overlapping_components.IsEmpty())
+	
+	if(overlapping_components.IsEmpty() || Heat_Component->Heat_Status_Param == 0)//
 		Clear_CheckContactDamage_Timer();
 
 
@@ -186,15 +190,15 @@ void AHeat_Actor::Clear_CheckContactDamage_Timer()
 }
 //------------------------------------------------------------------------------------------------------------
 //
-void AHeat_Actor::Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& was_damage_applyed)
-{
-
-	if (target->Implements<UDamage_Interface>())
-	{
-		Cast<IDamage_Interface>(target)->Take_Damage(this, damage_info, was_damage_applyed);
-	}
-	//Targets_Manager
-}
+//void AHeat_Actor::Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& was_damage_applyed)
+//{
+//
+//	if (target->Implements<UDamage_Interface>())
+//	{
+//		Cast<IDamage_Interface>(target)->Take_Damage(this, damage_info, was_damage_applyed);
+//	}
+//	//Targets_Manager
+//}
 //------------------------------------------------------------------------------------------------------------
 //Processing incoming damage(IDamage_Interface)
 void AHeat_Actor::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bool& was_damaged)
