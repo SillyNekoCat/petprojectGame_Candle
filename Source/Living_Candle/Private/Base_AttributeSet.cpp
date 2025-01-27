@@ -32,10 +32,20 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	const FGameplayEffectContextHandle& effect_context = Data.EffectSpec.GetEffectContext();
 	AActor* instigator = effect_context.GetOriginalInstigator();
 	AActor* causer = effect_context.GetEffectCauser();
-	float damage = 0.0f;
+	float magnitude = 0.0f;
 	
-	FGameplayTag damage_tag;
-	
+	FGameplayTag tag;
+
+	if (Data.EvaluatedData.Attribute == GetIncoming_HealAttribute())
+	{
+		tag = FGameplayTag::RequestGameplayTag(FName("Heal"));
+		magnitude = GetIncoming_Heal();
+		if (Can_Heal)
+		{
+			SetHealth(FMath::Clamp(GetHealth() + magnitude, 0.0f, GetHealth_Max()));
+			SetIncoming_Heal(0.0f);
+		}
+	}
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys"))
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure"))
@@ -43,13 +53,13 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	//Incoming_Phys_Damage
 	if (Data.EvaluatedData.Attribute == GetIncoming_Phys_DamageAttribute())
 	{
-		damage_tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys"));
-		damage = GetIncoming_Phys_Damage();
+		tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys"));
+		magnitude = GetIncoming_Phys_Damage();
 
-		if (Can_Change_Health)
+		if (Can_Take_Damage)
 		{
 			
-			SetHealth(FMath::Clamp(GetHealth() - damage, 0.0f, GetHealth_Max()));
+			SetHealth(FMath::Clamp(GetHealth() - magnitude, 0.0f, GetHealth_Max()));
 			SetIncoming_Phys_Damage(0.0f);
 		}
 	}
@@ -57,12 +67,12 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	//Incoming_Fire_Damage
 	if (Data.EvaluatedData.Attribute == GetIncoming_Fire_DamageAttribute())
 	{
-		damage_tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"));
-		damage = GetIncoming_Fire_Damage();
+		tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"));
+		magnitude = GetIncoming_Fire_Damage();
 
-		if (Can_Change_Health)
+		if (Can_Take_Damage)
 		{
-			SetHealth(FMath::Clamp(GetHealth() - damage, 0.0f, GetHealth_Max()));
+			SetHealth(FMath::Clamp(GetHealth() - magnitude, 0.0f, GetHealth_Max()));
 			SetIncoming_Fire_Damage(0.0f);
 		}
 	}
@@ -70,12 +80,12 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	//Incoming_Pure_Damage
 	if (Data.EvaluatedData.Attribute == GetIncoming_Pure_DamageAttribute())
 	{
-		damage_tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure"));
-		damage = GetIncoming_Pure_Damage();
+		tag = FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure"));
+		magnitude = GetIncoming_Pure_Damage();
 
-		if (Can_Change_Health)
+		if (Can_Take_Damage)
 		{ 
-			SetHealth(FMath::Clamp(GetHealth() - damage, 0.0f, GetHealth_Max()));
+			SetHealth(FMath::Clamp(GetHealth() - magnitude, 0.0f, GetHealth_Max()));
 			SetIncoming_Pure_Damage(0.0f);
 		}
 
@@ -83,18 +93,18 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	
 	//for (FGameplayEffectModifiedAttribute modified_attr : Data.EffectSpec.ModifiedAttributes) 
 	
-	On_Damage_Take.Broadcast(instigator, causer, damage_tag, damage, HealthBeforeAttributeChange, GetHealth());
+	On_Damage_Take.Broadcast(instigator, causer, tag, magnitude, HealthBeforeAttributeChange, GetHealth());
 
 	//On Health changed
 	if (GetHealth() != HealthBeforeAttributeChange)
 	{
 		//On_Health_Changed.Broadcast(instigator, causer, &Data.EffectSpec, Data.EvaluatedData.Magnitude, HealthBeforeAttributeChange, GetHealth());
 		
-		On_Health_Changed.Broadcast(instigator, causer, damage_tag, damage, HealthBeforeAttributeChange, GetHealth());
+		On_Health_Changed.Broadcast(instigator, causer, tag, magnitude, HealthBeforeAttributeChange, GetHealth());
 
-		//On Zero Health (death?)
+		//On Zero Health (death)
 		if(GetHealth() <= 0.0f)
-			On_Health_Zero.Broadcast(instigator, causer, damage_tag, damage, HealthBeforeAttributeChange, GetHealth());
+			On_Health_Zero.Broadcast(instigator, causer, tag, magnitude, HealthBeforeAttributeChange, GetHealth());
 	}
 	else //On Damage Effect recieved but health not changed
 	{

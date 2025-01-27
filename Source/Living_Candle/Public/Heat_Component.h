@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+п»ї// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -70,7 +70,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Give_PartOfHeat_NotHaveHeatComp = 1.0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Heat_Status_Start = 0.0;
-	//the higher value, the slowly it will heat up and higher maximum accumulated heat will have(если делители разные то нагрев будет неправильно делится)
+	//the higher value, the slowly it will heat up and higher maximum accumulated heat will have(РµСЃР»Рё РґРµР»РёС‚РµР»Рё СЂР°Р·РЅС‹Рµ С‚Рѕ РЅР°РіСЂРµРІ Р±СѓРґРµС‚ РЅРµРїСЂР°РІРёР»СЊРЅРѕ РґРµР»РёС‚СЃСЏ)
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double HeatResistance_Divider = 5.0;
 
 	//the higher value, the faster it will cooling, use a fractional percentage value for example: (0-1) 0.1 = 10%, 1 = 100%

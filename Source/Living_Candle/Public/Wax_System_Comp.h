@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "PlayerHUD.h"
+#include "AbilitySystemComponent.h"
+#include "Base_AttributeSet.h" 
 #include "Components/ActorComponent.h"
 #include "Wax_System_Comp.generated.h"
 
@@ -44,10 +46,12 @@ public:
 	FTimerHandle WickBurnTimer_Handle;
 	FTimerDelegate WickBurn_Delegate;
 
+	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Owner_BaseAttributeSet;
+	UPROPERTY(BlueprintReadOnly) UAbilitySystemComponent* Owner_ASC;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;//(wax)
-	UPROPERTY(BlueprintReadWrite) int Wick_Items = 0;//переносить в AttributeSet?
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;//переносить в AttributeSet
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;//переносить в AttributeSet
+	UPROPERTY(BlueprintReadWrite) int Wick_Items = 0;//НЕ переносить в AttributeSet
 	UPROPERTY(BlueprintReadWrite) int Wax_Items = 0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick = 4.0f;

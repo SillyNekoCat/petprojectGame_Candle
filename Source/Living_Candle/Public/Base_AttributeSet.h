@@ -15,7 +15,7 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 //DECLARE_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor*, EffectInstigator, AActor*, EffectCauser, FGameplayTag, DamageTag, float, Damage, float, OldValue, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor*, EffectInstigator, AActor*, EffectCauser, FGameplayTag, DamageTag, float, Magnitude, float, OldValue, float, NewValue);
 
 
 /**
@@ -41,8 +41,9 @@ public:
 	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Health_Changed;//Attribute event
 	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Health_Zero;//Attribute event
 
-	//bool Can_Take_Damage;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Change_Health = true;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Take_Damage = true;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Heal = true;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health"/*, ReplicatedUsing = OnRep_Health*/) FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Health)

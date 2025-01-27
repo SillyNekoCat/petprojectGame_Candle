@@ -4,7 +4,6 @@
 
 #include "Components/SceneComponent.h"
 #include "CoreMinimal.h"
-#include "Damage_Interface.h"
 #include "GameFramework/Actor.h" 
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
@@ -16,7 +15,7 @@ class UInteract_CapsuleComponent;
 class USceneComponent;
 
 UCLASS()
-class LIVING_CANDLE_API AFire_Stream : public AActor//, public IDamage_Interface
+class LIVING_CANDLE_API AFire_Stream : public AActor
 {
 	GENERATED_BODY()
 

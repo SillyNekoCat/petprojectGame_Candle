@@ -85,8 +85,7 @@ ALiving_CandleCharacter::ALiving_CandleCharacter()
 	//Attack_Comp
 	//Attack_Comp = CreateDefaultSubobject<UAttack_Comp>(TEXT("Attack_Comp"));
 
-	//Damage_System_Comp
-	Damage_System_Comp = CreateDefaultSubobject<UDamage_System_Comp>(TEXT("Damage_System_Comp"));
+
 }
 //------------------------------------------------------------------------------------------------------------
 void ALiving_CandleCharacter::BeginPlay()
@@ -176,28 +175,7 @@ void ALiving_CandleCharacter::Head_Wick_Collision_BeginOverlap(UPrimitiveCompone
 	}
 
 }
-//------------------------------------------------------------------------------------------------------------
-//Handling incoming damage specific to this class (IDamage_Interface) 
-void ALiving_CandleCharacter::Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged)
-{
-	double result_damage = 0;
 
-	//1. Calculate damage
-	result_damage = damage_info.Pure_Damage + damage_info.Phys_Damage + damage_info.Fire_Damage;
-	
-	
-
-
-	//2. Taking result damage (нужно адаптировать для атрибутов)
-	Wax_System->Current_HP = Wax_System->Current_HP - result_damage;
-
-	Wax_System->Update_Wick_Bar();
-	Wax_System->Update_Wax_Bar();
-	Wax_System->Check_Wick();
-
-	if (Wax_System->Current_HP <= 0)
-		Death(Enum_Death_Case::EDeath_WaxLoss);
-}
 //------------------------------------------------------------------------------------------------------------
 //
 void ALiving_CandleCharacter::Melee_Attack_TraceEnable()

@@ -1,10 +1,8 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
-#include "Damage_Interface.h"
 #include "PlayerHUD.h"
-#include "Damage_System_Comp.h"
 #include "Attack_Comp.h"
 #include "Wax_System_Comp.h"
 #include "AbilitySystemComponent.h"
@@ -21,7 +19,6 @@
 class UBase_AttributeSet;
 class UAttack_AttributeSet;
 class UAbilitySystemComponent;
-class UDamage_System_Comp;
 class UWax_System_Comp;
 //class UAttack_Comp;
 class USphereComponent;
@@ -48,7 +45,7 @@ enum class Enum_Death_Case : uint8
 };
 //------------------------------------------------------------------------------------------------------------
 UCLASS(config=Game)
-class ALiving_CandleCharacter : public ACharacter, public IDamage_Interface, public IAbilitySystemInterface
+class ALiving_CandleCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -86,10 +83,7 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	////////////~ End IAbilitySystemInterface
 
-	////////////~ Begin IDamage_Interface
-	//handling incoming damage specific to this class
-	virtual void Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged) override;
-	////////////~ End IDamage_Interface
+
 
 
 
@@ -106,7 +100,7 @@ public:
 	
 
 	//////////////////////COMPONENTS
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UDamage_System_Comp* Damage_System_Comp;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UAttack_Comp* Attack_Comp;
 

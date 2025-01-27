@@ -121,7 +121,6 @@ void AFire_Stream::Dealing_DamageOverTime()
 	TArray <FHitResult> hits_results;
 	FHitResult hit_result;
 
-	bool was_damage_applyed;
 
 	Start_Loc = Start_Point->GetComponentLocation();
 	End_Loc = End_Point->GetComponentLocation();
@@ -166,12 +165,12 @@ void AFire_Stream::Dealing_DamageOverTime()
 				//Owner_ASC->ApplyGameplayEffectSpecToTarget(*Weapon_Damage_Spec.Data, asc_damage_actor);//crash
 			}
 
-			if (damage_actors[i]->Implements<UDamage_Interface>() )
-			{
+			//if (damage_actors[i]->Implements<UDamage_Interface>() )
+			//{
 
-				Cast<IDamage_Interface>(damage_actors[i])->Take_Damage(Owner_A, FlameStream_CurrentDamage_Info, was_damage_applyed);
+			//	Cast<IDamage_Interface>(damage_actors[i])->Take_Damage(Owner_A, FlameStream_CurrentDamage_Info, was_damage_applyed);
 
-			}
+			//}
 		}
 	}
 	//Send targets to apply damage

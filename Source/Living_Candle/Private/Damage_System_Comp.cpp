@@ -21,11 +21,11 @@ void UDamage_System_Comp::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	if (GetOwner()->Implements<UDamage_Interface>())
-	{//Cast<IDamage_Interface>(GetOwner())->Take_Damage(this, damage_info, was_damage_applyed);
-		Owner_DamageInterface = Cast<IDamage_Interface>(GetOwner());
+	//if (GetOwner()->Implements<UDamage_Interface>())
+	//{//Cast<IDamage_Interface>(GetOwner())->Take_Damage(this, damage_info, was_damage_applyed);
+	//	Owner_DamageInterface = Cast<IDamage_Interface>(GetOwner());
 
-	}
+	//}
 }
 //------------------------------------------------------------------------------------------------------------
 // Called every frame
@@ -34,18 +34,5 @@ void UDamage_System_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-}
-//------------------------------------------------------------------------------------------------------------
-//Call Take_Damage interface function in owner of this component
-void UDamage_System_Comp::Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged)
-{
-	//GetOwner()->Take_Damage(damage_causer, damage_info, was_damaged);
-
-	if (GetOwner()->Implements<UDamage_Interface>())
-	{
-		
-		Owner_DamageInterface->Take_Damage(damage_causer, damage_info, was_damaged);
-	}
-	
 }
 //------------------------------------------------------------------------------------------------------------

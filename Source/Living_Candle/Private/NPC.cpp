@@ -46,20 +46,6 @@ void ANPC::Tick(float DeltaTime)
 
 }
 //------------------------------------------------------------------------------------------------------------
-//Handling incoming damage specific to this class (IDamage_Interface)
-void ANPC::Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged)
-{
-	Current_HP = Current_HP - (damage_info.Phys_Damage + damage_info.Fire_Damage);
-
-
-	//if (GEngine) //debug message on screen
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Current_HP = %f"), Current_HP));
-
-	if (Current_HP <= 0.0f)
-		Destroy();
-
-}
-//------------------------------------------------------------------------------------------------------------
 //
 UAbilitySystemComponent* ANPC::GetAbilitySystemComponent() const
 {

@@ -2,6 +2,7 @@
 
 
 #include "Wax_System_Comp.h"
+#include "AbilitySystemBlueprintLibrary.h"
 
 //------------------------------------------------------------------------------------------------------------
 // Sets default values for this component's properties
@@ -24,6 +25,10 @@ void UWax_System_Comp::BeginPlay()
 	WickBurn_Delegate.BindUFunction(this, TEXT("Wick_Burn"));
 
 	Owner = GetOwner();
+
+	//
+	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner);
+	Owner_BaseAttributeSet = Cast<UBase_AttributeSet>(Owner_ASC->GetAttributeSet(UBase_AttributeSet::StaticClass()) ); 
 
 }
 //------------------------------------------------------------------------------------------------------------

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Melee_Weapon.h"
-#include "Damage_Interface.h"//
 #include "Knockback_Comp.h"
 #include "Sword.generated.h"
 
@@ -14,7 +13,7 @@ class UKnockback_Comp;
 //DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_TakeW, FDamage_Inf, bool);
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
-class LIVING_CANDLE_API ASword : public AMelee_Weapon, public IDamage_Interface
+class LIVING_CANDLE_API ASword : public AMelee_Weapon
 {
 	GENERATED_BODY()
 
@@ -27,10 +26,7 @@ public:
 	//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
 	virtual TArray <UAbilitySystemComponent*> Attack_Trace() override;
 
-	////////////~ Begin IDamage_Interface
-	//handling incoming damage specific to this class
-	virtual void Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged) override;
-	////////////~ End IDamage_Interface
+
 
 
 

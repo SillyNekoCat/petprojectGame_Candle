@@ -132,6 +132,8 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemC
 	}
 
 	Last_Touched_Actors = Damage_Actors;
+	//если нужно много ударов за атаку по одной и той же цели(например прикладывание бензопилы к врагу), то Last_Touched_Actor не нужно обрабатывать
+
 	Last_Touched_Comps = Hit_Components;
 
 	ascs_apply_damage = ASCs_ApplyDamage;
@@ -167,26 +169,5 @@ TArray <UAbilitySystemComponent*> ASword::Attack_Trace()
 
 	Check_Hit(hits_results, ascs);
 	return ascs;
-}
-//------------------------------------------------------------------------------------------------------------
-//Handling incoming damage specific to this class (IDamage_Interface)
-void ASword::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bool& was_damaged)
-{
-	//damage_info.Fire_Damage = damage_info.Fire_Damage - Fire_Block;
-	//if(damage_info.Fire_Damage < 0.0)
-	//	damage_info.Fire_Damage = 0.0;
-
-
-	//damage_info.Phys_Damage =
-	//damage_info.Damage_Reaction =
-
-	bool was_damage_taken = true;
-
-	was_damaged = was_damage_taken;
-
-	//OnDamage_TakeWDelegate.Broadcast(damage_info, was_damage_taken);
-
-	//Heat_Component->HeatDamage_Take(damage_info, was_damage_taken); можно сделать проще без делегата
-
 }
 //------------------------------------------------------------------------------------------------------------

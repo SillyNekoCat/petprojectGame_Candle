@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Damage_Interface.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Base_AttributeSet.h" 
@@ -15,7 +14,7 @@ class UWidgetComponent;
 
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
-class LIVING_CANDLE_API ANPC : public ACharacter, public IDamage_Interface, public IAbilitySystemInterface
+class LIVING_CANDLE_API ANPC : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -25,10 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	////////////~ Begin IDamage_Interface
-	//handling incoming damage specific to this class
-	virtual void Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged) override;
-	////////////~ End IDamage_Interface
+
 
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 

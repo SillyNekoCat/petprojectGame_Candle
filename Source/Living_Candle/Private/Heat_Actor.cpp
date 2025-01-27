@@ -200,40 +200,6 @@ void AHeat_Actor::Clear_CheckContactDamage_Timer()
 //	//Targets_Manager
 //}
 //------------------------------------------------------------------------------------------------------------
-//Processing incoming damage(IDamage_Interface)
-void AHeat_Actor::Take_Damage(AActor* damage_causer, FDamage_Inf damage_info, bool& was_damaged)
-{
-	//damage_info.Fire_Damage = damage_info.Fire_Damage - Fire_Block;
-	//if(damage_info.Fire_Damage < 0.0)//validate
-		//damage_info.Fire_Damage = 0.0;
-
-
-
-
-	//damage_info.Phys_Damage =
-	//damage_info.Damage_Reaction =
-
-	bool was_damage_taken = true;
-
-	was_damaged = was_damage_taken;
-
-	if(damage_info.Fire_Damage > 0.0)
-		//OnDamage_TakeDelegate.Broadcast(damage_info, was_damage_taken);//delete?
-	
-
-	
-	//Check death
-	if (Death_OnMaxHeat == true && Heat_Component->Heat_Status_Param >= 1.0)
-	{
-		Death();
-
-	}
-
-
-	Check_HeatMelting();
-
-}
-//------------------------------------------------------------------------------------------------------------
 //What will happen before destroying
 void AHeat_Actor::Death()
 {

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GenericStructs.h"
-//#include "Damage_Interface.h"
 #include "Targets_Manager.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"

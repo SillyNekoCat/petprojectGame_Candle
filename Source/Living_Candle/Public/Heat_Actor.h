@@ -1,9 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+п»ї// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Damage_Interface.h"
 #include "GameFramework/Actor.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
@@ -24,7 +23,7 @@ class UAbilitySystemComponent;
 class UHeat_Component;
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
-class LIVING_CANDLE_API AHeat_Actor : public AActor, public IDamage_Interface, public IAbilitySystemInterface
+class LIVING_CANDLE_API AHeat_Actor : public AActor, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -44,10 +43,7 @@ public:
 	//UFUNCTION(BlueprintCallable) void Apply_Damage(AActor* target, FDamage_Inf damage_info, bool& was_damage_applyed); 
 
 
-	////////////~ Begin IDamage_Interface
-	//handling incoming damage specific to this class
-	virtual void Take_Damage(AActor *damage_causer, FDamage_Inf damage_info, bool &was_damaged) override;
-	////////////~ End IDamage_Interface
+
 	
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 
@@ -59,7 +55,7 @@ public:
 	UFUNCTION(BlueprintCallable) void Check_HeatMelting();
 	
 	FVector Get_Shape_Value(UBoxComponent* collision_comp);
-	void Correct_Collision(UBoxComponent* collision_comp, FVector scale);//Корректирует компонент коллизии после скейла в зависимости от его типа. 
+	void Correct_Collision(UBoxComponent* collision_comp, FVector scale);//РљРѕСЂСЂРµРєС‚РёСЂСѓРµС‚ РєРѕРјРїРѕРЅРµРЅС‚ РєРѕР»Р»РёР·РёРё РїРѕСЃР»Рµ СЃРєРµР№Р»Р° РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РµРіРѕ С‚РёРїР°. 
 
 	//using for debug
 	bool do_once = true;
