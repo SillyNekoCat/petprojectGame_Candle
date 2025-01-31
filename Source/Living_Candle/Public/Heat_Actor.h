@@ -7,7 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Base_AttributeSet.h" 
-#include "Targets_Manager.h"
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "Interact_SphereComponent.h"
@@ -18,7 +17,6 @@
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamage_Take, FDamage_Inf, damage_info, bool, was_damage_taken);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCheck_Heat, double, heat_status);
 class UBase_AttributeSet;
-class UTargets_Manager;
 class UAbilitySystemComponent;
 class UHeat_Component;
 //------------------------------------------------------------------------------------------------------------
@@ -78,6 +76,7 @@ public:
 	//Need for level scripting or...
 	UPROPERTY(BlueprintAssignable) FOnCheck_Heat OnCheckHeat_Delegate;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> GE_HeatContactDamage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Can_Melting = false; 
 
@@ -96,7 +95,7 @@ public:
 	UPROPERTY(BlueprintReadWrite) UPrimitiveComponent* Last_OverlapComp;
 
 	//////////////Components
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) UTargets_Manager* Targets_Manager;
+
 	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
 

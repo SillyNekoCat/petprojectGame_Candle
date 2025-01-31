@@ -11,8 +11,8 @@ ANPC::ANPC()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget_Component"));
-	Widget_Component->SetupAttachment(RootComponent);
+	//Widget_Component = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget_Component"));
+	//Widget_Component->SetupAttachment(RootComponent);
 
 	//
 	AbilitySystem_Comp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem_Comp"));

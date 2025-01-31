@@ -33,9 +33,9 @@ AFire_Stream::AFire_Stream()
 	//Capsule->AttachToComponent(Start_Point, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Capsule_BeginOverlap);
 
+	//ASC
+	Owner_ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 
-	//Targets_Manager
-	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
 }
 //------------------------------------------------------------------------------------------------------------
 // ConstructionScript
@@ -58,13 +58,24 @@ void AFire_Stream::BeginPlay()
 
 	//Get Owner
 	Owner_A = GetParentActor();
+	if (IsValid(Owner_A) )
+	{
+		if(UAbilitySystemComponent* o_asc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_A) ) 
+			Owner_ASC = o_asc;
+
+	}
+	else
+	{
+		
+	}
+	
 
 	if(Owner_A != nullptr)
 	{
 
 		if (Ignore_Owner == true)
 		{
-			Trace_Ignore_Actors.AddUnique(Owner_A);
+			Trace_Ignore_Actors.Add(Owner_A);
 		}
 		
 	}
@@ -115,7 +126,7 @@ void AFire_Stream::Set_Dealing_DamageOverTime_Timer()
 // timer function, trace
 void AFire_Stream::Dealing_DamageOverTime()
 {
-	TArray <UAbilitySystemComponent*> ascs_apply_damage;
+	//TArray <UAbilitySystemComponent*> ascs_apply_damage;
 
 	TArray <AActor*> damage_actors;
 	TArray <FHitResult> hits_results;
@@ -158,11 +169,11 @@ void AFire_Stream::Dealing_DamageOverTime()
 		{
 			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(damage_actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
 			{
-				ascs_apply_damage.Add(asc_damage_actor);
+				//ascs_apply_damage.Add(asc_damage_actor);
 
-				//Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Weapon_Damage_Spec, asc_damage_actor);
-
-				//Owner_ASC->ApplyGameplayEffectSpecToTarget(*Weapon_Damage_Spec.Data, asc_damage_actor);//crash
+				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Fire_Damage);
+				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
 			}
 
 			//if (damage_actors[i]->Implements<UDamage_Interface>() )
@@ -173,8 +184,7 @@ void AFire_Stream::Dealing_DamageOverTime()
 			//}
 		}
 	}
-	//Send targets to apply damage
-	Targets_Manager->Send_Targets(ascs_apply_damage);
+
 
 	Capsule->GetOverlappingActors(Overlapping_Actors);
 
@@ -254,4 +264,9 @@ void AFire_Stream::Calculate_CapsuleTraceShapes()
 	Capsule->SetRelativeLocation(FVector(0.0, 0.0, length_of_vectors_difference / 2.0));
 }
 //------------------------------------------------------------------------------------------------------------
-
+//
+UAbilitySystemComponent* AFire_Stream::GetAbilitySystemComponent() const
+{
+	return Owner_ASC;
+}
+//------------------------------------------------------------------------------------------------------------

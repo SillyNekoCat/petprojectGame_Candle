@@ -45,10 +45,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Take_Damage = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool Can_Heal = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health"/*, ReplicatedUsing = OnRep_Health*/) FGameplayAttributeData Health;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health") FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Health)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health"/*, ReplicatedUsing = OnRep_HealthMax*/) FGameplayAttributeData Health_Max;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Health") FGameplayAttributeData Health_Max;
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Health_Max)
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Phys_Block = 0.f;
@@ -71,8 +71,8 @@ public:
 
 		UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Incoming_Pure_Damage = 0.f;
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Incoming_Pure_Damage)
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Incoming_Heal = 0.f;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Incoming_Heal = 0.f;// не нужен?
 	ATTRIBUTE_ACCESSORS(UBase_AttributeSet, Incoming_Heal)
 
 };

@@ -95,9 +95,14 @@ void ASword::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemC
 			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
 			{
 				//ASCs_ApplyDamage.Add(asc_damage_actor);
-				Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
+				float heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
+				
+				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->GetPhys_Damage());
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
+				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
 
-				Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
+				//Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
 				//Тут должен вызыватся делегат из таргет компонента
 
 

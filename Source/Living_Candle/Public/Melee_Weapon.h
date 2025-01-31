@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GenericStructs.h"
-#include "Targets_Manager.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "WeaponAttributeSet.h"
@@ -16,7 +15,6 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Melee_Weapon.generated.h"
 
-class UTargets_Manager;
 class UAbilitySystemComponent;
 class UWeaponAttributeSet;
 class UBase_AttributeSet;
@@ -74,9 +72,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Debug) bool Weapon_Trace_Debug = false; 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Debug) float Weapon_Trace_Debug_Duration = 1.f; 
 
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) float Attack_Trace_Interval = 0.01f; LOOPING TIMER TRACE METHOD
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Weapon_Attack = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Debug) bool Is_Weapon_Attack = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) TSubclassOf<UGameplayEffect> GE_Damage_ToApply;
 	//Need for modify
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) FDamage_Inf Weapon_CurrentDamage_Info;
 	//Need for revert
@@ -87,9 +85,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite) UAbilitySystemComponent* Owner_ASC = nullptr;
 	
-	UPROPERTY(BlueprintReadWrite) FGameplayEffectSpecHandle Weapon_Damage_Spec;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) TSubclassOf<UGameplayEffect> GE_Damage_ToApply;
+	//UPROPERTY(BlueprintReadWrite) FGameplayEffectSpec Weapon_Damage_Spec; //
 
 	UPROPERTY(BlueprintReadOnly) TArray <AActor*> Last_Touched_Actors;
 	UPROPERTY(BlueprintReadOnly) TArray <UPrimitiveComponent*> Last_Touched_Comps;
@@ -98,7 +94,6 @@ public:
 
 	
 	///////////////COMPONENTS
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Melee_Weapon) UTargets_Manager* Targets_Manager;
 	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UWeaponAttributeSet* Weapon_AttributeSet;
 	

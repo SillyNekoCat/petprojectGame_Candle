@@ -10,7 +10,6 @@
 #include "NPC.generated.h"
 class UBase_AttributeSet;
 class UAbilitySystemComponent;
-class UWidgetComponent;
 
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
@@ -37,7 +36,7 @@ public:
 	////////////Components
 	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) UWidgetComponent* Widget_Component;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere) UWidgetComponent* Widget_Component;
 
 protected:
 	// Called when the game starts or when spawned

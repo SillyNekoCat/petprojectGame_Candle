@@ -29,8 +29,7 @@ AMelee_Weapon::AMelee_Weapon()
 	//
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
 
-	//Targets_Manager
-	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
+	
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
@@ -99,9 +98,10 @@ void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_own
 	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
 	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
 	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
-
+	
+	
 	//Spec принадлежит владельцу оружия
-	Weapon_Damage_Spec = Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0.0f, Owner_ASC->MakeEffectContext());
+	//Weapon_Damage_Spec =  *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get(); 
 	//Изменяем базовые значения оружия
 }
 //------------------------------------------------------------------------------------------------------------
@@ -182,15 +182,15 @@ void AMelee_Weapon::Revert_Weapon_Damage_Info()
 
 	
 	
-	if (!Weapon_Damage_Spec.IsValid())
-	{
-		return;
-	}
-	
-	//Base phys damage
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->Phys_Damage.GetBaseValue() ); 
-	//Base fire damage
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->Fire_Damage.GetBaseValue() ); 
+	//if (!Weapon_Damage_Spec.IsValid())
+	//{
+	//	return;
+	//}
+	//
+	////Base phys damage
+	//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->Phys_Damage.GetBaseValue() ); 
+	////Base fire damage
+	//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->Fire_Damage.GetBaseValue() ); 
 
 	
 }
@@ -204,7 +204,7 @@ void AMelee_Weapon::Set_Weapon_BaseDamage_Info(double phys, double fire, double 
 	{	}//nothing changes
 	else
 	{
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), phys); 
+		//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), phys); 
 		Weapon_BaseDamage_Info.Phys_Damage = phys;
 	}
 

@@ -119,6 +119,7 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 
 	for (int i = 0; i < Ignore_Actors.Num() ; i++) //ignored actors
 	{
+
 		if (Ignore_Actors.Contains(target->GetClass()) )
 		{
 			return Last_FireContactDamage;
@@ -131,7 +132,11 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 		{
 			if (same_comp->Heat_Status_Param < Heat_Status_Param)
 			{
-						
+				///////////// попытка сделать всегда "правильное" расределение нагрева
+				//float diffrence_multiplyer = 1.f; 
+				//if(HeatResistance_Divider > same_comp->HeatResistance_Divider)
+				//	diffrence_multiplyer = same_comp->HeatResistance_Divider / HeatResistance_Divider;
+				/////////////
 
 				Last_FireContactDamage = (Accumulated_Heat - same_comp->Accumulated_Heat) * Give_PartOfHeat_HaveHeatComp;
 				

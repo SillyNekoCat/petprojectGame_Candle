@@ -20,9 +20,6 @@ AHeat_Actor::AHeat_Actor()
 
 	//
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
-
-	//Targets_Manager
-	Targets_Manager = CreateDefaultSubobject<UTargets_Manager>(TEXT("Targets_Manager"));
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
@@ -102,18 +99,15 @@ void AHeat_Actor::Collision_ComponentBeginOverlap(UPrimitiveComponent* Overlappe
 {
 	
 	HeatContact_Damage();
-	
-	
-	if (!CheckContactDamage_TimerHandle.IsValid() ) 
-		Set_CheckContactDamage_Timer();
+	Set_CheckContactDamage_Timer();
 
 }
 //------------------------------------------------------------------------------------------------------------
 //
 void AHeat_Actor::Set_CheckContactDamage_Timer()
 {
-	
-	GetWorldTimerManager().SetTimer(CheckContactDamage_TimerHandle, CheckContactDamage_Delegate, ContactCheck_Interval, true, -1.0f);
+	if (!CheckContactDamage_TimerHandle.IsValid() ) 
+		GetWorldTimerManager().SetTimer(CheckContactDamage_TimerHandle, CheckContactDamage_Delegate, ContactCheck_Interval, true, -1.0f);
 	
 }
 //------------------------------------------------------------------------------------------------------------
@@ -126,22 +120,18 @@ void AHeat_Actor::HeatContact_Damage()
 	//TArray <UAbilitySystemComponent*> ascs_apply_damage; 
 	
 	GetOverlappingComponents(overlapping_components);
+	//Box_Comp->GetOverlappingComponents(overlapping_components);//is this better?
+
 	
 
 	for (int i = 0; i < overlapping_components.Num(); i++)
 	{
-		if (overlapping_components[i]->GetOwner() == this)
-		{
-			overlapping_components.RemoveSingle(overlapping_components[i]);
-			continue;
-		}
 
 		if (!Cast<UInteract_SphereComponent>(overlapping_components[i]) && !Cast<UInteract_CapsuleComponent>(overlapping_components[i]) && !Cast<UInteract_BoxComponent>(overlapping_components[i]) )
 		{
 			AActor* comp_owner = overlapping_components[i]->GetOwner();
 			
-			
-			Heat_Component->Calculate_HeatContactDamage(comp_owner);
+			float heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(comp_owner);
 			
 			////DEBUG
 			if(Debug)
@@ -153,21 +143,13 @@ void AHeat_Actor::HeatContact_Damage()
 				}
 			}
 				
-			
-			//FDamage_Inf damage_info;
-			//damage_info.Fire_Damage = fire_contact_damage;
-
-			//Apply_Damage(comp_owner, damage_info, was_damage_applyed);
 
 			//apply damage
 			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(comp_owner))
 			{
-				//TArray <UAbilitySystemComponent*> ascs_apply_damage; 
-				//ascs_apply_damage.Add(asc_damage_actor);	
-				
-				//Targets_Manager->Send_Targets(ascs_apply_damage);
-				Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
-				//Last_FireContactDamage = 0.0;
+				FGameplayEffectSpec GE_Spec_Damage = *AbilitySystem_Comp->MakeOutgoingSpec(GE_HeatContactDamage, 0, AbilitySystem_Comp->MakeEffectContext()).Data.Get();
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), heatcomp_fire_damage);
+				AbilitySystem_Comp->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
 			}
 
 		}

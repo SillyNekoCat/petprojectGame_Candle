@@ -107,12 +107,15 @@ void ALiving_CandleCharacter::BeginPlay()
 	//Attack_Comp
 	Attack_Comp = GetComponentByClass<UAttack_Comp>();
 
+	//HUD
 	if (UPlayerHUD* playerhud = Cast<UPlayerHUD>(Player_Widget_HUD->GetUserWidgetObject()) )
 	{
 		PlayerHUD = playerhud;
 		PlayerHUD->AddToPlayerScreen();
-		Wax_System->Calculate_Max_HP();
 		Wax_System->Owner_PlayerHUD = PlayerHUD;
+
+		Wax_System->Calculate_Max_HP();
+		
 		
 		Wax_System->Update_Wick_Bar(); 
 		Wax_System->Update_Wax_Bar(); 

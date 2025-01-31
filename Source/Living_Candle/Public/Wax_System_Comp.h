@@ -46,15 +46,25 @@ public:
 	FTimerHandle WickBurnTimer_Handle;
 	FTimerDelegate WickBurn_Delegate;
 
+
+	UPROPERTY(BlueprintReadWrite) FGameplayEffectSpec GE_Spec_Heal;
+	UPROPERTY(BlueprintReadWrite) FGameplayEffectSpec GE_Spec_Increase_HealthMax;
+	UPROPERTY(BlueprintReadWrite) FGameplayEffectSpec GE_Spec_Decrease_HealthMax;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> Heal_GE;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> Increase_HealthMax_GE;//Health.Increase_HealthMax
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> Decrease_HealthMax_GE;//Health.Decrease_HealthMax
+
 	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Owner_BaseAttributeSet;
 	UPROPERTY(BlueprintReadOnly) UAbilitySystemComponent* Owner_ASC;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;//переносить в AttributeSet
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;//переносить в AttributeSet
-	UPROPERTY(BlueprintReadWrite) int Wick_Items = 0;//НЕ переносить в AttributeSet
-	UPROPERTY(BlueprintReadWrite) int Wax_Items = 0;
+	
+	UPROPERTY(BlueprintReadWrite) int Wick_Items = 0; //Стоит ли переносить в AttributeSet?
+	UPROPERTY(BlueprintReadWrite) int Wax_Items = 0; //Стоит ли переносить в AttributeSet?
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick = 4.0f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick = 4.0f; //Стоит ли переносить в AttributeSet?
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wax_Wick_Ratio = 5.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick_Burn_Loss = 1.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick_Burn_Interval = 2.0f;

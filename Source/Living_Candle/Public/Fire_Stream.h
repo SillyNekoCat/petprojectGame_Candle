@@ -5,17 +5,18 @@
 #include "Components/SceneComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h" 
+#include "AbilitySystemComponent.h"
+#include "AbilitySystemInterface.h"
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "Interact_SphereComponent.h"
-#include "Targets_Manager.h"
 #include "Fire_Stream.generated.h"
-class UTargets_Manager;
+class UAbilitySystemComponent;
 class UInteract_CapsuleComponent;
 class USceneComponent;
 
 UCLASS()
-class LIVING_CANDLE_API AFire_Stream : public AActor
+class LIVING_CANDLE_API AFire_Stream : public AActor, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -35,6 +36,10 @@ public:
 	UFUNCTION(BlueprintCallable) void Modify_FlameStreamDamage(double phys = 0.0, double fire = 0.0, double knockback = 0.0, double stun = 0.0);
 	UFUNCTION(BlueprintCallable) void Calculate_CapsuleTraceShapes();
 
+	////////////~ Begin IAbilitySystemInterface
+	// Returns our Ability System Component. 
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	////////////~ End IAbilitySystemInterface
 
 	FVector Start_Loc;
 	FVector End_Loc;
@@ -43,6 +48,11 @@ public:
 
 	FTimerHandle Dealing_DamageOverTime_TimerHandle;
 	FTimerDelegate Dealing_DamageOverTime_Delegate;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> GE_Damage;
+	
+	//Use self-created asc if owner does'nt exist
+	UPROPERTY(BlueprintReadWrite) UAbilitySystemComponent* Owner_ASC;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) bool Ignore_Owner = true;
 
@@ -54,15 +64,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Radius = 30.f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) double Length = 200.0;
 
-
-
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Fire_Damage = 1.f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_BaseDamage_Info;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_CurrentDamage_Info;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
 	/////////////////////Components
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) UTargets_Manager* Targets_Manager;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) UInteract_CapsuleComponent * Capsule;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * Start_Point;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * End_Point;

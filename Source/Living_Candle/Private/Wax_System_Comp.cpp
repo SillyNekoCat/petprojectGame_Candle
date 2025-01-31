@@ -26,9 +26,24 @@ void UWax_System_Comp::BeginPlay()
 
 	Owner = GetOwner();
 
+
 	//
 	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner);
-	Owner_BaseAttributeSet = Cast<UBase_AttributeSet>(Owner_ASC->GetAttributeSet(UBase_AttributeSet::StaticClass()) ); 
+	Owner_BaseAttributeSet = Owner_ASC->GetSet<UBase_AttributeSet>(); 
+	
+
+	GE_Spec_Heal = *Owner_ASC->MakeOutgoingSpec(Heal_GE, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+	//GE_Spec_Heal.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Heal")), 3.0);
+	//Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Heal);
+
+	GE_Spec_Increase_HealthMax = *Owner_ASC->MakeOutgoingSpec(Increase_HealthMax_GE, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+	//GE_Spec_Increase_HealthMax.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Increase_HealthMax")), 3.0);
+	//Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Increase_HealthMax);
+
+	GE_Spec_Decrease_HealthMax = *Owner_ASC->MakeOutgoingSpec(Decrease_HealthMax_GE, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+	//GE_Spec_Decrease_HealthMax.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Decrease_HealthMax")), 3.0);
+	//Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Decrease_HealthMax);
+
 
 }
 //------------------------------------------------------------------------------------------------------------
@@ -40,17 +55,17 @@ void UWax_System_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	// ...
 }
 //------------------------------------------------------------------------------------------------------------
-//Timer Function
+//Timer Function, decreases Health_Max and call hud update
 void UWax_System_Comp::Wick_Burn()
 {
-	if (Current_HP + Wax_Wick_Ratio <= Max_HP)
-	{	}
-	else
-	{ 
-		
-		Owner->GetWorldTimerManager().ClearTimer(WickBurnTimer_Handle);
-		return;
-	}
+	//if (/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
+	//{	}
+	//else
+	//{ 
+	//	
+	//	Owner->GetWorldTimerManager().ClearTimer(WickBurnTimer_Handle);
+	//	return;
+	//}
 
 	Wick = Wick - Wick_Burn_Loss;
 	Calculate_Max_HP();
@@ -59,19 +74,20 @@ void UWax_System_Comp::Wick_Burn()
 	Update_Wick_Bar();
 	Update_Wax_Bar();
 
-	if (Current_HP + Wax_Wick_Ratio <= Max_HP)
-	{	}
-	else
-	{ 
-		Owner->GetWorldTimerManager().ClearTimer(WickBurnTimer_Handle);
-	}
+	//if (/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
+	//{	}
+	//else
+	//{ 
+	//	Owner->GetWorldTimerManager().ClearTimer(WickBurnTimer_Handle);
+	//}
+	Check_Wick();
 }
 //------------------------------------------------------------------------------------------------------------
-// set or clear timer Wick_Burn
+//If Health + Wax_Wick_Ratio <= Health_Max, so then set Wick_Burn burn timer, otherwise clear timer.
 void UWax_System_Comp::Check_Wick()
 {
 	
-	if(Current_HP + Wax_Wick_Ratio <= Max_HP)
+	if(/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
 	{
 		if (WickBurnTimer_Handle.IsValid())
 		{	}
@@ -85,13 +101,30 @@ void UWax_System_Comp::Check_Wick()
 	{
 		Owner->GetWorldTimerManager().ClearTimer(WickBurnTimer_Handle);
 		//WickBurnTimer_Handle.Invalidate();//
+		
 	}
 }
 //------------------------------------------------------------------------------------------------------------
 //
 void UWax_System_Comp::Calculate_Max_HP()
 {
-	Max_HP = Wick * Wax_Wick_Ratio;
+	//Max_HP = Wick * Wax_Wick_Ratio;//APPLY GAMEPLAYEFFECT
+	float new_max = Wick * Wax_Wick_Ratio;
+	 
+
+	if (Owner_BaseAttributeSet->GetHealth_Max() < new_max)
+	{
+		
+		GE_Spec_Increase_HealthMax.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Increase_HealthMax")), new_max - Owner_BaseAttributeSet->GetHealth_Max());
+		Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Increase_HealthMax);
+	}
+	else
+	{
+		GE_Spec_Decrease_HealthMax.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Decrease_HealthMax")), new_max - Owner_BaseAttributeSet->GetHealth_Max());
+		Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Decrease_HealthMax);
+	}
+
+
 }
 //------------------------------------------------------------------------------------------------------------
 //Update HUD number using Wick_Items
@@ -115,14 +148,14 @@ void UWax_System_Comp::Update_Wax_Items(float amount)
 //Update HUD BAR using Wax_Items
 void UWax_System_Comp::Update_Wax_Bar()
 {
-	Owner_PlayerHUD->Percent_Wax_Bar = Current_HP / Max_HP;
-	Owner_PlayerHUD->Wax_Value_Text = Current_HP;
+	Owner_PlayerHUD->Percent_Wax_Bar = /*Current_HP*/Owner_BaseAttributeSet->GetHealth() / /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max();
+	Owner_PlayerHUD->Wax_Value_Text = /*Current_HP*/Owner_BaseAttributeSet->GetHealth();
 }
 //------------------------------------------------------------------------------------------------------------
 //Update HUD BAR using Wick_Items
 void UWax_System_Comp::Update_Wick_Bar()
 {
-	Owner_PlayerHUD->Percent_Wick_Bar = (Max_HP / Wax_Wick_Ratio) / Wick;
+	Owner_PlayerHUD->Percent_Wick_Bar = (/*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max() / Wax_Wick_Ratio) / Wick;
 	Owner_PlayerHUD->Wick_Value_Text = Wick;
 }
 //------------------------------------------------------------------------------------------------------------
@@ -143,7 +176,10 @@ void UWax_System_Comp::Check_Can_Increase_MaxHP()
 
 		Calculate_Max_HP();
 
-		Current_HP = Current_HP + (wick_increase * Wax_Wick_Ratio);
+		//Current_HP = Current_HP + (wick_increase * Wax_Wick_Ratio);//APPLY GAMEPLAYEFFECT
+		
+		GE_Spec_Heal.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Heal")), wick_increase * Wax_Wick_Ratio);
+		Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Heal);
 
 		//Apply remaining items
 		Wax_Items = result_wax_item;
@@ -161,8 +197,9 @@ void UWax_System_Comp::Check_Can_Increase_MaxHP()
 //If Current_HP < Max_HP chose heal, else add wax item.  health(wax) system
 void UWax_System_Comp::Heal_Or_UpdateWaxItems(float amount)
 {
+	//Owner_ASC->GetGameplayAttributeValue(UBase_AttributeSet::GetHealthAttribute())
 
-	float possible_heal_amount = Max_HP - Current_HP;
+	float possible_heal_amount = /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max() - /*Current_HP*/Owner_BaseAttributeSet->GetHealth();
 	float amount_after_heal = amount - possible_heal_amount;
 	
 	if (possible_heal_amount >= amount)
@@ -181,8 +218,10 @@ void UWax_System_Comp::Heal_Or_UpdateWaxItems(float amount)
 void UWax_System_Comp::Heal(float amount)
 {
 	Calculate_Max_HP();
-	Current_HP = Current_HP + amount;
+	//Current_HP = Current_HP + amount; //APPLY GAMEPLAYEFFECT
 	
+	GE_Spec_Heal.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Heal")), amount);
+	Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Heal);
 	
 	Update_Wax_Bar();
 }

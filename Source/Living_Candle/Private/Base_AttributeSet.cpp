@@ -38,7 +38,7 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 
 	if (Data.EvaluatedData.Attribute == GetIncoming_HealAttribute())
 	{
-		tag = FGameplayTag::RequestGameplayTag(FName("Heal"));
+		tag = FGameplayTag::RequestGameplayTag(FName("Health.Heal"));
 		magnitude = GetIncoming_Heal();
 		if (Can_Heal)
 		{
@@ -46,6 +46,7 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 			SetIncoming_Heal(0.0f);
 		}
 	}
+
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys"))
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure"))
