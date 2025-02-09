@@ -24,10 +24,10 @@ public:
 	UAttack_AttributeSet();
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Melee_Damage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Melee_Damage = 1.f;
 	ATTRIBUTE_ACCESSORS(UAttack_AttributeSet, Melee_Damage)
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Range_Damage = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Range_Damage = 1.f;
 	ATTRIBUTE_ACCESSORS(UAttack_AttributeSet, Range_Damage)
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Added_Physical_Damage = 0.f;

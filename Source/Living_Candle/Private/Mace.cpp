@@ -14,13 +14,11 @@
 AMace::AMace()
 {
 
-	Heat_Component = CreateDefaultSubobject<UHeat_Component>(TEXT("Heat_Component"));
 	//OnDamage_TakeWDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take); 
 	Knockback_Comp = CreateDefaultSubobject<UKnockback_Comp>(TEXT("Knockback_Comp"));
 
 
 }
-
 //------------------------------------------------------------------------------------------------------------
 //
 void AMace::BeginPlay()
@@ -36,137 +34,31 @@ void AMace::BeginPlay()
 
 }
 //------------------------------------------------------------------------------------------------------------
-//validate result of trace, using him as parameter for delegate call On_SendTargets.
-void AMace::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
-{
-	FDamage_Inf current_damage = Weapon_CurrentDamage_Info;//Без этого будет неправильный урон
-
-	//for (int i = 0; i < hits_results.Num() ; i++) 
-	//{
-
-	//	AActor* hit_actor = hits_results[i].GetActor();
-	//	UPrimitiveComponent* hit_comp = hits_results[i].GetComponent();
-
-	//	if (hit_actor != nullptr && !Cast<UInteract_SphereComponent>(hit_comp) && !Cast<UInteract_CapsuleComponent>(hit_comp) && !Cast<UInteract_BoxComponent>(hit_comp))
-	//	{
-	//		if (Last_Touched_Actor != hit_actor)
-	//		{
-	//			if (hit_actor->Implements<UDamage_Interface>())
-	//			{//Наносим урон только тем, кого мы ещё не касались за время атаки.
-
-	//				if (Heat_Component->Accumulated_Heat != 0.0)//если оружие нагрето, то будет дополнительный урон от огня.
-	//					Heat_Component->Calculate_HeatContactDamage(hit_actor, current_damage.Fire_Damage);
-
-	//				Cast<IDamage_Interface>(hit_actor)->Take_Damage(Owner_Of_Weapon, current_damage, Was_Weapon_Damage_Applyed);
-
-	//			}
-
-	//			if (current_damage.Damage_Reaction == Enum_Damage_Reaction::EKnockback)
-	//			{
-	//				Knockback_Comp->Knockback_Impulse(hit_actor, hit_comp, Owner_Of_Weapon);//
-	//			}
-	//		}
-
-	//		Last_Touched_Actor = hit_actor;
-	//		//если нужно много ударов за атаку по одной и той же цели(например прикладывание бензопилы к врагу), то Last_Touched_Actor не нужно обрабатывать
-
-	//	}
-	//}
-
-	//Check hits
-	for (int i = 0; i < hits_results.Num(); i++)
-	{
-
-		if (!Cast<UInteract_SphereComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_CapsuleComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_BoxComponent>(hits_results[i].GetComponent()))
-		{
-			Damage_Actors.AddUnique(hits_results[i].GetActor());
-			Hit_Components.AddUnique(hits_results[i].GetComponent());
-		}
-
-
-	}
-
-	////Apply damage
-	for (int i = 0; i < Damage_Actors.Num() ; i++) 
-	{
-		if (Damage_Actors[i] != nullptr && !Last_Touched_Actors.Contains(Damage_Actors[i]) )//Один удар за атаку
-		{
-
-			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
-			{
-				//ASCs_ApplyDamage.Add(asc_damage_actor);
-				float heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
-
-				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->GetPhys_Damage());
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
-				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
-
-				//Targets_Manager->Send_Targets(TArray <UAbilitySystemComponent*>{asc_damage_actor});
-				//Тут должен вызыватся делегат из таргет компонента
-
-
-			}
-
-			//if (Damage_Actors[i]->Implements<UDamage_Interface>() )//old
-			//{
-			//	
-			//	if (Heat_Component->Accumulated_Heat != 0.0)//если оружие нагрето, то будет дополнительный урон от огня.
-			//		current_damage.Fire_Damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
-
-			//	Cast<IDamage_Interface>(Damage_Actors[i])->Take_Damage(Owner_Of_Weapon, current_damage, Was_Weapon_Damage_Applyed);
-			//}
-
-		}
-
-	}
-
-	//Apply impulse
-	if (current_damage.Knockback > 0.0 && Knockback_Comp != nullptr)
-	{
-		for (int i = 0; i < Hit_Components.Num(); i++)
-		{
-			if (Hit_Components[i] != nullptr && !Last_Touched_Comps.Contains(Hit_Components[i]) )
-			{
-
-				Knockback_Comp->Knockback_Impulse(Hit_Components[i]->GetOwner(), Hit_Components[i], Owner_Of_Weapon);
-
-			}
-
-		}
-	}
-
-	Last_Touched_Actors = Damage_Actors;
-	//если нужно много ударов за атаку по одной и той же цели(например прикладывание бензопилы к врагу), то Last_Touched_Actor не нужно обрабатывать
-
-	Last_Touched_Comps = Hit_Components;
-
-	ascs_apply_damage = ASCs_ApplyDamage;
-
-	Damage_Actors.Empty();
-	Hit_Components.Empty();
-	ASCs_ApplyDamage.Empty();
-
-}
-//------------------------------------------------------------------------------------------------------------
 //This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
-TArray <UAbilitySystemComponent*> AMace::Attack_Trace()
+void AMace::Attack_Trace()
 {
 	//FHitResult hit_result;
 	TArray <FHitResult> hits_results;
-	TArray <UAbilitySystemComponent*> ascs;
 
-	FCollisionShape shape = FCollisionShape::MakeSphere(Trace_Radius); 
+	UWorld* world = GetWorld();
+	FCollisionShape shape = FCollisionShape::MakeSphere(Trace_Radius);
+	FCollisionQueryParams collision_query_params = FCollisionQueryParams(FName(TEXT("BoxTraceMulti")), false);
+	collision_query_params.AddIgnoredActors(Weapon_Ignored_Actors);
+	//collision_query_params.AddIgnoredComponents();
 
-	if(Weapon_Trace_Debug)
+	FVector start_socket_loc = Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket"));
+
+	if(Is_SweepBegin)//do once on start of attack
 	{
-		DrawDebugSphere(GetWorld(), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), shape.GetSphereRadius(), 10, FColor::Yellow, false, Weapon_Trace_Debug_Duration);
-		DrawDebugCylinder(GetWorld(), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), shape.GetSphereRadius(), 6, FColor::Purple, false, Weapon_Trace_Debug_Duration);
-		DrawDebugSphere(GetWorld(), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), shape.GetSphereRadius(), 10, FColor::Yellow, false, Weapon_Trace_Debug_Duration);
+		StartSweepLoc_Old = start_socket_loc;
+		Old_ActorRotation = GetActorRotation();
 	}
 
-	if (GetWorld()->SweepMultiByChannel(hits_results, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), FQuat::Identity, ECC_GameTraceChannel1, shape) )
-		Check_Hit(hits_results, ascs);
+	if (bool is_hit = world->SweepMultiByChannel(hits_results, StartSweepLoc_Old, start_socket_loc, Old_ActorRotation.Quaternion(), ECC_GameTraceChannel1, shape, collision_query_params))
+	{
+		if(Weapon_Trace_Debug)
+			DrawDebugSphereTraceMulti(world, StartSweepLoc_Old, start_socket_loc, Trace_Radius, EDrawDebugTrace::ForDuration, is_hit, hits_results, FColor::Purple, FColor::Green, Weapon_Trace_Debug_Duration);
+	}
 
 
 	////Is this better??
@@ -188,7 +80,9 @@ TArray <UAbilitySystemComponent*> AMace::Attack_Trace()
 
 	
 
-
-	return ascs;
+	Old_ActorRotation = GetActorRotation();
+	StartSweepLoc_Old = start_socket_loc;
+	Is_SweepBegin = false;
+	Check_Hit(hits_results);
 }
 //------------------------------------------------------------------------------------------------------------

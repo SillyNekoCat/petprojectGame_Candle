@@ -18,12 +18,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
-	UFUNCTION(BlueprintCallable) FVector Impulse_Calculate(FVector start, FVector target);
-	UFUNCTION(BlueprintCallable) void Knockback_Impulse(AActor* actor, UPrimitiveComponent* comp, AActor* owner_of_weapon);
+	UFUNCTION(BlueprintCallable) FVector Impulse_Calculate(FVector start, FVector target, float impulse, float z_impulse);
+	UFUNCTION(BlueprintCallable) void Knockback_Impulse(AActor* actor, UPrimitiveComponent* comp, AActor* owner_of_weapon, float impulse);
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Velocity_Change = true;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Impulse = 250.0;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Z_Impulse = 200.0;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Velocity_Change = true;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere) double Impulse = 250.0;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere) double Z_Impulse = 200.0;
 
 protected:
 	// Called when the game starts

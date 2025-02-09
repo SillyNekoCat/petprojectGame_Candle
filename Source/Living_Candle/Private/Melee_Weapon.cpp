@@ -4,6 +4,8 @@
 #include "Melee_Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "Interact_SphereComponent.h"
+#include "Interact_CapsuleComponent.h"
+#include "Interact_BoxComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 //------------------------------------------------------------------------------------------------------------
@@ -43,8 +45,13 @@ void AMelee_Weapon::BeginPlay()
 
 	Modify_Weapon_CurrentDamage_Info
 	(Weapon_BaseDamage_Info.Phys_Damage, Weapon_BaseDamage_Info.Fire_Damage, Weapon_BaseDamage_Info.Knockback, Weapon_BaseDamage_Info.Stun);
+	
 
+	//
 	Knockback_Comp = GetComponentByClass<UKnockback_Comp>();
+
+	//
+	Heat_Component = GetComponentByClass<UHeat_Component>();
 
 	//
 	if (IsValid(Weapon_AbilitySystemComp)) 
@@ -97,12 +104,10 @@ void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_own
 	Owner_Of_Weapon = weapon_owner;
 	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
 	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
+	Owner_AttackAttributeSet = Cast<UAttack_AttributeSet>(Owner_ASC->GetAttributeSet(UAttack_AttributeSet::StaticClass()));
+
 	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
 	
-	
-	//Spec принадлежит владельцу оружия
-	//Weapon_Damage_Spec =  *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get(); 
-	//Изменяем базовые значения оружия
 }
 //------------------------------------------------------------------------------------------------------------
 //
@@ -126,6 +131,7 @@ void AMelee_Weapon::Detach()
 	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
 	Owner_Of_Weapon = nullptr;
 	Owner_ASC = nullptr;
+	Owner_AttackAttributeSet = nullptr;
 
 	//Восстанавливаем базовые значения оружия
 	Revert_Weapon_Damage_Info();
@@ -159,17 +165,94 @@ void AMelee_Weapon::Disable_Attack_Trace()
 
 }
 //------------------------------------------------------------------------------------------------------------
-//validate result of trace, using him as parameter for delegate call On_SendTargets.
-void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results, TArray <UAbilitySystemComponent*> &ascs_apply_damage)
+//validate result of trace
+void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 {
+	FDamage_Inf current_damage = Weapon_CurrentDamage_Info;//Без этого будет неправильный урон
 
+	//Check hits
+	for (int i = 0; i < hits_results.Num(); i++)
+	{
+
+		if (!Cast<UInteract_SphereComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_CapsuleComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_BoxComponent>(hits_results[i].GetComponent()))
+		{
+			Damage_Actors.AddUnique(hits_results[i].GetActor());
+			Hit_Components.AddUnique(hits_results[i].GetComponent());
+		}
+
+
+	}
+
+	////Apply damage
+	for (int i = 0; i < Damage_Actors.Num() ; i++) 
+	{
+		if (Damage_Actors[i] != nullptr && !Last_Touched_Actors.Contains(Damage_Actors[i]) )//Один удар за атаку
+		{
+
+			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
+			{
+				//ASCs_ApplyDamage.Add(asc_damage_actor);
+
+
+				////1. Damage
+				//1.1 calculate damage
+				float modified_phys_damage = Weapon_AttributeSet->GetPhys_Damage();
+				if(IsValid(Owner_AttackAttributeSet))
+					modified_phys_damage = (Weapon_AttributeSet->GetPhys_Damage() + Owner_AttackAttributeSet->GetMelee_Damage() + Owner_AttackAttributeSet->GetAdded_Physical_Damage() ) * Owner_AttackAttributeSet->GetPhysical_Damage_Multiplier();
+
+				float heatcomp_fire_damage = 0.f;
+				if(Heat_Component->Can_Heat)
+					heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
+
+				//1.2 Make Effect Spec for Damage
+				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), modified_phys_damage);
+				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
+				
+				//1.3 Apply Damage Effect
+				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
+
+				////2. Knockback
+				//2.1 Make Effect Spec for Knockback
+				FGameplayEffectSpec GE_Spec_Knockback = *Owner_ASC->MakeOutgoingSpec(GE_Knockback_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+				GE_Spec_Knockback.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Ability.Knockback.ImpulseMagnitude")), Owner_AttackAttributeSet->GetKnockback());	
+
+				//2.2 Apply Knockback Effect
+				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Knockback, asc_damage_actor);
+			}
+
+		}
+
+	}
+
+	////Apply impulse
+	//if (current_damage.Knockback > 0.0 && Knockback_Comp != nullptr)
+	//{
+	//	for (int i = 0; i < Hit_Components.Num(); i++)
+	//	{
+	//		if (Hit_Components[i] != nullptr && !Last_Touched_Comps.Contains(Hit_Components[i]))
+	//		{
+
+	//			Knockback_Comp->Knockback_Impulse(Hit_Components[i]->GetOwner(), Hit_Components[i], Owner_Of_Weapon, 500.f);
+
+	//		}
+
+	//	}
+	//}
+
+	Last_Touched_Actors = Damage_Actors;
+
+	Last_Touched_Comps = Hit_Components;
+
+	Damage_Actors.Empty();
+	Hit_Components.Empty();
+	ASCs_ApplyDamage.Empty();
 }
 //------------------------------------------------------------------------------------------------------------
 //This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
-TArray <UAbilitySystemComponent*> AMelee_Weapon::Attack_Trace()
+void AMelee_Weapon::Attack_Trace()
 {
-	TArray <UAbilitySystemComponent*> ascs;
-	return ascs;
+
 }
 //------------------------------------------------------------------------------------------------------------
 //Revert Weapon_CurrentDamage_Info to base values Weapon_BaseDamage_Info
@@ -223,8 +306,8 @@ void AMelee_Weapon::Set_Weapon_BaseDamage_Info(double phys, double fire, double 
 		Weapon_BaseDamage_Info.Knockback = knockback;
 		if(Knockback_Comp != nullptr)
 		{
-			Knockback_Comp->Impulse = knockback;
-			Knockback_Comp->Z_Impulse = knockback / 5;
+			//Knockback_Comp->Impulse = knockback;
+			//Knockback_Comp->Z_Impulse = knockback / 5;
 		}
 	}
 
@@ -263,8 +346,8 @@ void AMelee_Weapon::Modify_Weapon_CurrentDamage_Info(double phys, double fire, d
 		Weapon_CurrentDamage_Info.Knockback = knockback;
 		if(Knockback_Comp != nullptr)
 		{
-			Knockback_Comp->Impulse = knockback;
-			Knockback_Comp->Z_Impulse = knockback / 5;
+			//Knockback_Comp->Impulse = knockback;
+			//Knockback_Comp->Z_Impulse = knockback / 5;
 		}
 	}
 
