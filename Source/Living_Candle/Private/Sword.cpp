@@ -13,8 +13,7 @@
 // Sets default values
 ASword::ASword()
 {
-	//OnDamage_TakeWDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take); 
-	Knockback_Comp = CreateDefaultSubobject<UKnockback_Comp>(TEXT("Knockback_Comp"));
+	
 
 
 }

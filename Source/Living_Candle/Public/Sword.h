@@ -4,12 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Melee_Weapon.h"
-#include "Knockback_Comp.h"
 #include "Sword.generated.h"
 
-
-
-class UKnockback_Comp;
 //DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_TakeW, FDamage_Inf, bool);
 //------------------------------------------------------------------------------------------------------------
 UCLASS()

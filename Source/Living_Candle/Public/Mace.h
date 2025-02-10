@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Melee_Weapon.h"
-#include "Knockback_Comp.h"
 #include "Mace.generated.h"
 
 /**

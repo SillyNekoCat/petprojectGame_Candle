@@ -42,14 +42,7 @@ void AMelee_Weapon::BeginPlay()
 	//Trace_Delegate.BindUFunction(this, TEXT("Attack_Trace"));
 	
 	//AttackDuration_Delegate.BindUFunction(this, TEXT("AttackTrace_Duration"));
-
-	Modify_Weapon_CurrentDamage_Info
-	(Weapon_BaseDamage_Info.Phys_Damage, Weapon_BaseDamage_Info.Fire_Damage, Weapon_BaseDamage_Info.Knockback, Weapon_BaseDamage_Info.Stun);
 	
-
-	//
-	Knockback_Comp = GetComponentByClass<UKnockback_Comp>();
-
 	//
 	Heat_Component = GetComponentByClass<UHeat_Component>();
 
@@ -75,15 +68,6 @@ void AMelee_Weapon::Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* Overlap
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Weapon_Hit_Capsule_BeginOverlap"));
 }
 //------------------------------------------------------------------------------------------------------------
-//timer function
-//void AMelee_Weapon::AttackTrace_Duration()
-//{
-//
-//	Disable_Attack_Trace();
-//	Last_Touched_Actor = nullptr;//чтобы последующие атаки наносили урон одной и той же цели. 
-//
-//}
-//------------------------------------------------------------------------------------------------------------
 //
 void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_owner)
 {
@@ -97,7 +81,7 @@ void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_own
 		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(false);
 	}
 
-	// аттачим оружие к нашему персонажу
+	// Attach to character
 	FAttachmentTransformRules attachment_rules(EAttachmentRule::SnapToTarget, true);
 	AttachToComponent(arms_mesh, attachment_rules, FName(TEXT("Weapon_Socket")));
 
@@ -132,9 +116,6 @@ void AMelee_Weapon::Detach()
 	Owner_Of_Weapon = nullptr;
 	Owner_ASC = nullptr;
 	Owner_AttackAttributeSet = nullptr;
-
-	//Восстанавливаем базовые значения оружия
-	Revert_Weapon_Damage_Info();
 }
 //------------------------------------------------------------------------------------------------------------
 //
@@ -252,112 +233,6 @@ void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 //This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
 void AMelee_Weapon::Attack_Trace()
 {
-
-}
-//------------------------------------------------------------------------------------------------------------
-//Revert Weapon_CurrentDamage_Info to base values Weapon_BaseDamage_Info
-void AMelee_Weapon::Revert_Weapon_Damage_Info()
-{
-	//Weapon_CurrentDamage_Info.Phys_Damage = Weapon_BaseDamage_Info.Phys_Damage;
-	//Weapon_CurrentDamage_Info.Fire_Damage = Weapon_BaseDamage_Info.Fire_Damage;
-	//Weapon_CurrentDamage_Info.Knockback = Weapon_BaseDamage_Info.Knockback;
-	//Weapon_CurrentDamage_Info.Stun = Weapon_BaseDamage_Info.Stun;
-
-	
-	
-	//if (!Weapon_Damage_Spec.IsValid())
-	//{
-	//	return;
-	//}
-	//
-	////Base phys damage
-	//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), Weapon_AttributeSet->Phys_Damage.GetBaseValue() ); 
-	////Base fire damage
-	//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->Fire_Damage.GetBaseValue() ); 
-
-	
-}
-//------------------------------------------------------------------------------------------------------------
-//Change Weapon_BaseDamage_Info
-void AMelee_Weapon::Set_Weapon_BaseDamage_Info(double phys, double fire, double knockback, double stun)
-{
-
-
-	if (phys == 0.0)
-	{	}//nothing changes
-	else
-	{
-		//UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(Weapon_Damage_Spec, FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), phys); 
-		Weapon_BaseDamage_Info.Phys_Damage = phys;
-	}
-
-	if (fire == 0.0)
-	{	}//nothing changes
-	else
-	{
-
-		Weapon_BaseDamage_Info.Fire_Damage = fire;
-	}
-
-	if (knockback == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_BaseDamage_Info.Knockback = knockback;
-		if(Knockback_Comp != nullptr)
-		{
-			//Knockback_Comp->Impulse = knockback;
-			//Knockback_Comp->Z_Impulse = knockback / 5;
-		}
-	}
-
-	if (stun == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_BaseDamage_Info.Stun = stun;
-	}
-	
-	Weapon_CurrentDamage_Info = Weapon_BaseDamage_Info;
-}
-//------------------------------------------------------------------------------------------------------------
-//Change Weapon_CurrentDamage_Info
-void AMelee_Weapon::Modify_Weapon_CurrentDamage_Info(double phys, double fire, double knockback, double stun) 
-{
-	if (phys == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_CurrentDamage_Info.Phys_Damage = phys;
-	}
-
-	if (fire == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_CurrentDamage_Info.Fire_Damage = fire;
-	}
-	
-
-	if (knockback == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_CurrentDamage_Info.Knockback = knockback;
-		if(Knockback_Comp != nullptr)
-		{
-			//Knockback_Comp->Impulse = knockback;
-			//Knockback_Comp->Z_Impulse = knockback / 5;
-		}
-	}
-
-	if (stun == 0.0)
-	{	}//nothing changes
-	else
-	{
-		Weapon_CurrentDamage_Info.Stun = stun;
-	}
-
 
 }
 //------------------------------------------------------------------------------------------------------------

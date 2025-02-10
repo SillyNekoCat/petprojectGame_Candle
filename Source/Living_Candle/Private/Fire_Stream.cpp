@@ -176,30 +176,18 @@ void AFire_Stream::Dealing_DamageOverTime()
 				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
 			}
 
-			//if (damage_actors[i]->Implements<UDamage_Interface>() )
-			//{
-
-			//	Cast<IDamage_Interface>(damage_actors[i])->Take_Damage(Owner_A, FlameStream_CurrentDamage_Info, was_damage_applyed);
-
-			//}
 		}
 	}
 
-
+	//Clear timer if no overlapping actors, exept owner
 	Capsule->GetOverlappingActors(Overlapping_Actors);
+	//if (IsValid(Owner_A))
+		//Overlapping_Actors.Remove(Owner_A); //dissapears on player after first trace
 
 	if (Overlapping_Actors.IsEmpty())
 	{
 		Clear_Dealing_DamageOverTime_Timer();
 	}
-
-	//if (hit_result.GetActor() != nullptr)
-	//{
-	//	if (hit_result.GetActor()->Implements<UDamage_Interface>() )
-	//	{
-	//		Cast<IDamage_Interface>(hit_result.GetActor())->Take_Damage(GetOwner(), FlameStream_Damage_Info, was_damage_applyed);
-	//	}
-	//}
 
 }
 //------------------------------------------------------------------------------------------------------------

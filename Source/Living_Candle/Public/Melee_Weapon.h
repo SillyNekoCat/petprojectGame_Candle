@@ -11,7 +11,6 @@
 #include "Base_AttributeSet.h"
 #include "Interactable_Actor.h"
 #include "Components/CapsuleComponent.h"
-#include "Knockback_Comp.h"
 #include "Heat_Component.h"
 #include "KismetTraceUtils.h"
 #include "GameFramework/Actor.h"
@@ -49,11 +48,6 @@ public:
 	//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
 	UFUNCTION(BlueprintCallable) virtual void Attack_Trace(); 
 
-	//Revert base values to Weapon_Damage_Info
-	UFUNCTION(BlueprintCallable) virtual void Revert_Weapon_Damage_Info();
-	//Apply Modified_ damage variables to Weapon_Damage_Info
-	UFUNCTION(BlueprintCallable) virtual void Set_Weapon_BaseDamage_Info(double phys = 0.0, double fire = 0.0, double knockback = 0.0, double stun = 0.0);
-	UFUNCTION(BlueprintCallable) virtual void Modify_Weapon_CurrentDamage_Info(double phys = 0.0, double fire = 0.0, double knockback = 0.0, double stun = 0.0);
 	
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 
@@ -106,10 +100,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(BlueprintReadWrite, Category = Melee_Weapon) const UWeaponAttributeSet* Weapon_AttributeSet;
 	
-	//UKnockback_Comp reference if it exist
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UHeat_Component* Heat_Component;
-	//UKnockback_Comp reference if it exist
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) UKnockback_Comp* Knockback_Comp;
+	
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) USkeletalMeshComponent* Weapon_Skeletal_Mesh;
 
