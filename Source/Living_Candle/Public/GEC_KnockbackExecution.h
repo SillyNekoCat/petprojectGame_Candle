@@ -20,5 +20,5 @@ public:
 	virtual void Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, OUT FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const override;
 	
 	FVector Impulse_Calculate(FVector start, FVector target, float impulse, float z_impulse) const;
-	void Knockback_Impulse(AActor* actor, AActor* owner_of_weapon, float impulse) const;
+	void Knockback_Impulse(AActor* target_actor, AActor* source_actor, float impulse) const;
 };

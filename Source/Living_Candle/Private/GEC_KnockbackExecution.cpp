@@ -52,10 +52,13 @@ FVector UGEC_KnockbackExecution::Impulse_Calculate(FVector start, FVector target
 }
 //------------------------------------------------------------------------------------------------------------
 // Add impulse to Character_Movement_Component or root component that simulates physics
-void UGEC_KnockbackExecution::Knockback_Impulse(AActor* actor, AActor* owner_of_weapon, float impulse) const
+void UGEC_KnockbackExecution::Knockback_Impulse(AActor* target_actor, AActor* source_actor, float impulse) const
 {
-	AActor* input_actor = actor;
-	AActor* input_owner_of_weapon = owner_of_weapon;
+	if (!IsValid(target_actor) || !IsValid(source_actor))
+		return;
+
+	AActor* input_actor = target_actor;
+	AActor* input_owner_of_weapon = source_actor;
 	float character_z_impulse = impulse / 2.f;
 	float non_character_multiplyer = 150;
 	float non_character_multiplyer_z = non_character_multiplyer / 100.f;
@@ -73,12 +76,16 @@ void UGEC_KnockbackExecution::Knockback_Impulse(AActor* actor, AActor* owner_of_
 		}
 		else
 		{
-			UPrimitiveComponent* comp = Cast<UPrimitiveComponent>(input_actor->GetRootComponent());
-			if (comp->IsSimulatingPhysics())
+			USceneComponent* root_comp = input_actor->GetRootComponent();
+			if (IsValid(root_comp) )
 			{
-				//comp->AddImpulse(Impulse_Calculate(input_owner_of_weapon->GetActorLocation(), comp->GetComponentLocation(), impulse / 2,  impulse / 6), FName("None"), true);
+				UPrimitiveComponent* prim_comp = Cast<UPrimitiveComponent>(root_comp);
+				if (prim_comp->IsSimulatingPhysics())
+				{
+					//prim_compprim_comp->AddImpulse(Impulse_Calculate(input_owner_of_weapon->GetActorLocation(), prim_comp->GetComponentLocation(), impulse / 2,  impulse / 6), FName("None"), true);
 
-				comp->AddImpulseAtLocation(UKismetMathLibrary::MakeVector(owner_forward.X * impulse * non_character_multiplyer, owner_forward.Y * impulse * non_character_multiplyer, owner_forward.Z * non_character_multiplyer_z), input_owner_of_weapon->GetActorLocation());
+					prim_comp->AddImpulseAtLocation(UKismetMathLibrary::MakeVector(owner_forward.X * impulse * non_character_multiplyer, owner_forward.Y * impulse * non_character_multiplyer, owner_forward.Z * non_character_multiplyer_z), input_owner_of_weapon->GetActorLocation());
+				}
 			}
 
 
