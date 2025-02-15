@@ -2,6 +2,7 @@
 
 
 #include "Heat_Component.h"
+#include "Melee_Weapon.h"
 #include "Kismet/KismetMathLibrary.h"
 
 //------------------------------------------------------------------------------------------------------------
@@ -117,14 +118,15 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 
 	Last_FireContactDamage = 0;
 
-	for (int i = 0; i < Ignore_Actors.Num() ; i++) //ignored actors
+	//for (int i = 0; i < Ignore_Actors.Num() ; i++) //ignored actors
+	//{
+		  
+		
+	if (Ignore_Actors.Contains(target->StaticClass()) || Cast<AMelee_Weapon>(target) )
 	{
-
-		if (Ignore_Actors.Contains(target->GetClass()) )
-		{
-			return Last_FireContactDamage;
-		}
+		return Last_FireContactDamage;
 	}
+	//}
 
 	if (UHeat_Component* same_comp = Cast<UHeat_Component>(target->GetComponentByClass(UHeat_Component::StaticClass()) ) )
 	{

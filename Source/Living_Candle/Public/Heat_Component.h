@@ -81,7 +81,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Cooling_Setup_Delay = 1.0;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UMaterialInterface* Parent_Mat_Heat = 0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<TSubclassOf<UObject>> Ignore_Actors;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) TArray<UClass*> Ignore_Actors;
 
 
 protected:
