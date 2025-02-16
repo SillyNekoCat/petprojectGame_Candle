@@ -83,9 +83,6 @@ void AFire_Stream::BeginPlay()
 	//Bind timer functions
 	Dealing_DamageOverTime_Delegate.BindUFunction(this, TEXT("Dealing_DamageOverTime"));
 
-	//Setup FlameStream Damage
-	FlameStream_CurrentDamage_Info = FlameStream_BaseDamage_Info;
-
 	//Check overlap on spawn
 	//Capsule->GetOverlappingActors(Overlapping_Actors);
 	//if (!Dealing_DamageOverTime_TimerHandle.IsValid() && Overlapping_Actors.IsEmpty() != true)
@@ -180,11 +177,12 @@ void AFire_Stream::Dealing_DamageOverTime()
 	}
 
 	//Clear timer if no overlapping actors, exept owner
-	Capsule->GetOverlappingActors(Overlapping_Actors);
+	//Capsule->GetOverlappingActors(Overlapping_Actors);
 	//if (IsValid(Owner_A))
 		//Overlapping_Actors.Remove(Owner_A); //dissapears on player after first trace
 
-	if (Overlapping_Actors.IsEmpty())
+	//if (Overlapping_Actors.IsEmpty())
+	if (damage_actors.IsEmpty())
 	{
 		Clear_Dealing_DamageOverTime_Timer();
 	}
@@ -195,48 +193,6 @@ void AFire_Stream::Dealing_DamageOverTime()
 void AFire_Stream::Clear_Dealing_DamageOverTime_Timer()
 {
 	GetWorldTimerManager().ClearTimer(Dealing_DamageOverTime_TimerHandle);
-}
-//------------------------------------------------------------------------------------------------------------
-//Revert FlameStream_CurrentDamage_Info to base values FlameStream_BaseDamage_Info
-void AFire_Stream::Revert_FlameStreamDamage()
-{
-	FlameStream_CurrentDamage_Info.Phys_Damage = FlameStream_BaseDamage_Info.Phys_Damage;
-	FlameStream_CurrentDamage_Info.Fire_Damage = FlameStream_BaseDamage_Info.Fire_Damage;
-	FlameStream_CurrentDamage_Info.Knockback = FlameStream_BaseDamage_Info.Knockback;
-	FlameStream_CurrentDamage_Info.Stun = FlameStream_BaseDamage_Info.Stun;
-}
-//------------------------------------------------------------------------------------------------------------
-//Change FlameStream_CurrentDamage_Info
-void AFire_Stream::Modify_FlameStreamDamage(double phys, double fire, double knockback, double stun)
-{
-
-	if (phys == 0.0)
-	{	}//nothing changes
-	else
-	{
-		FlameStream_CurrentDamage_Info.Phys_Damage = phys;
-	}
-
-	if (fire == 0.0)
-	{	}//nothing changes
-	else
-	{
-		FlameStream_CurrentDamage_Info.Fire_Damage = fire;
-	}
-
-	if (knockback == 0.0)
-	{	}//nothing changes
-	else
-	{
-		FlameStream_CurrentDamage_Info.Knockback = knockback;
-	}
-
-	if (stun == 0.0)
-	{	}//nothing changes
-	else
-	{
-		FlameStream_CurrentDamage_Info.Stun = stun;
-	}
 }
 //------------------------------------------------------------------------------------------------------------
 //Calculate similar shapes for capsule and trace path

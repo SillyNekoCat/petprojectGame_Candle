@@ -32,8 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable) void Set_Dealing_DamageOverTime_Timer();
 	UFUNCTION() void Dealing_DamageOverTime(); // timer function
 	UFUNCTION(BlueprintCallable) void Clear_Dealing_DamageOverTime_Timer();
-	UFUNCTION(BlueprintCallable) void Revert_FlameStreamDamage();
-	UFUNCTION(BlueprintCallable) void Modify_FlameStreamDamage(double phys = 0.0, double fire = 0.0, double knockback = 0.0, double stun = 0.0);
 	UFUNCTION(BlueprintCallable) void Calculate_CapsuleTraceShapes();
 
 	////////////~ Begin IAbilitySystemInterface
@@ -44,7 +42,7 @@ public:
 	FVector Start_Loc;
 	FVector End_Loc;
 	
-	TArray <AActor*> Overlapping_Actors;
+	//TArray <AActor*> Overlapping_Actors;
 
 	FTimerHandle Dealing_DamageOverTime_TimerHandle;
 	FTimerDelegate Dealing_DamageOverTime_Delegate;
@@ -65,9 +63,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) double Length = 200.0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Fire_Damage = 1.f;
-	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_BaseDamage_Info;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) FDamage_Inf FlameStream_CurrentDamage_Info;
+
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
