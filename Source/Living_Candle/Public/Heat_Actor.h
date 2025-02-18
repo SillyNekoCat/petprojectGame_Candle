@@ -90,8 +90,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Melting_Scale_Divider = 2.0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Fire_Block = 0;
-
 	UPROPERTY(BlueprintReadWrite) UPrimitiveComponent* Last_OverlapComp;
 
 	//////////////Components
