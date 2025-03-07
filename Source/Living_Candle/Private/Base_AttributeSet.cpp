@@ -3,7 +3,7 @@
 
 #include "Base_AttributeSet.h"
 #include "GameplayEffectExtension.h"
-#include "AbilitySystemBlueprintLibrary.h"//
+//#include "AbilitySystemBlueprintLibrary.h"//
 //------------------------------------------------------------------------------------------------------------
 //
 UBase_AttributeSet::UBase_AttributeSet()
@@ -26,7 +26,7 @@ bool UBase_AttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData
 //------------------------------------------------------------------------------------------------------------
 //
 void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
-{//Can it capture more than one magnitude at the time?
+{
 	Super::PostGameplayEffectExecute(Data);
 	
 	const FGameplayEffectContextHandle& effect_context = Data.EffectSpec.GetEffectContext();
@@ -112,6 +112,20 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 		
 
 	}
+
+}
+//------------------------------------------------------------------------------------------------------------
+//
+void UBase_AttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+}
+//------------------------------------------------------------------------------------------------------------
+//
+void UBase_AttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+{
+	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
 }
 //------------------------------------------------------------------------------------------------------------

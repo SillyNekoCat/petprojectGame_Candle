@@ -58,7 +58,7 @@ void UWax_System_Comp::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 //Timer Function, decreases Health_Max and call hud update
 void UWax_System_Comp::Wick_Burn()
 {
-	//if (/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
+	//if (Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= Owner_BaseAttributeSet->GetHealth_Max())
 	//{	}
 	//else
 	//{ 
@@ -74,7 +74,7 @@ void UWax_System_Comp::Wick_Burn()
 	Update_Wick_Bar();
 	Update_Wax_Bar();
 
-	//if (/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
+	//if (Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= Owner_BaseAttributeSet->GetHealth_Max())
 	//{	}
 	//else
 	//{ 
@@ -87,7 +87,7 @@ void UWax_System_Comp::Wick_Burn()
 void UWax_System_Comp::Check_Wick()
 {
 	
-	if(/*Current_HP*/Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max())
+	if(Owner_BaseAttributeSet->GetHealth() + Wax_Wick_Ratio <= Owner_BaseAttributeSet->GetHealth_Max())
 	{
 		if (WickBurnTimer_Handle.IsValid())
 		{	}
@@ -108,7 +108,6 @@ void UWax_System_Comp::Check_Wick()
 //
 void UWax_System_Comp::Calculate_Max_HP()
 {
-	//Max_HP = Wick * Wax_Wick_Ratio;//APPLY GAMEPLAYEFFECT
 	float new_max = Wick * Wax_Wick_Ratio;
 	 
 
@@ -148,14 +147,14 @@ void UWax_System_Comp::Update_Wax_Items(float amount)
 //Update HUD BAR using Wax_Items
 void UWax_System_Comp::Update_Wax_Bar()
 {
-	Owner_PlayerHUD->Percent_Wax_Bar = /*Current_HP*/Owner_BaseAttributeSet->GetHealth() / /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max();
-	Owner_PlayerHUD->Wax_Value_Text = /*Current_HP*/Owner_BaseAttributeSet->GetHealth();
+	Owner_PlayerHUD->Percent_Wax_Bar = Owner_BaseAttributeSet->GetHealth() / Owner_BaseAttributeSet->GetHealth_Max();
+	Owner_PlayerHUD->Wax_Value_Text = Owner_BaseAttributeSet->GetHealth();
 }
 //------------------------------------------------------------------------------------------------------------
 //Update HUD BAR using Wick_Items
 void UWax_System_Comp::Update_Wick_Bar()
 {
-	Owner_PlayerHUD->Percent_Wick_Bar = (/*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max() / Wax_Wick_Ratio) / Wick;
+	Owner_PlayerHUD->Percent_Wick_Bar = (Owner_BaseAttributeSet->GetHealth_Max() / Wax_Wick_Ratio) / Wick;
 	Owner_PlayerHUD->Wick_Value_Text = Wick;
 }
 //------------------------------------------------------------------------------------------------------------
@@ -175,8 +174,6 @@ void UWax_System_Comp::Check_Can_Increase_MaxHP()
 		Wick = Wick + wick_increase;
 
 		Calculate_Max_HP();
-
-		//Current_HP = Current_HP + (wick_increase * Wax_Wick_Ratio);//APPLY GAMEPLAYEFFECT
 		
 		GE_Spec_Heal.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Heal")), wick_increase * Wax_Wick_Ratio);
 		Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Heal);
@@ -197,9 +194,8 @@ void UWax_System_Comp::Check_Can_Increase_MaxHP()
 //If Current_HP < Max_HP chose heal, else add wax item.  health(wax) system
 void UWax_System_Comp::Heal_Or_UpdateWaxItems(float amount)
 {
-	//Owner_ASC->GetGameplayAttributeValue(UBase_AttributeSet::GetHealthAttribute())
 
-	float possible_heal_amount = /*Max_HP*/Owner_BaseAttributeSet->GetHealth_Max() - /*Current_HP*/Owner_BaseAttributeSet->GetHealth();
+	float possible_heal_amount = Owner_BaseAttributeSet->GetHealth_Max() - Owner_BaseAttributeSet->GetHealth();
 	float amount_after_heal = amount - possible_heal_amount;
 	
 	if (possible_heal_amount >= amount)
@@ -218,7 +214,7 @@ void UWax_System_Comp::Heal_Or_UpdateWaxItems(float amount)
 void UWax_System_Comp::Heal(float amount)
 {
 	Calculate_Max_HP();
-	//Current_HP = Current_HP + amount; //APPLY GAMEPLAYEFFECT
+	
 	
 	GE_Spec_Heal.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Health.Heal")), amount);
 	Owner_ASC->ApplyGameplayEffectSpecToSelf(GE_Spec_Heal);

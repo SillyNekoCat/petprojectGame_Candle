@@ -42,4 +42,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Stun = 0.f;
 	ATTRIBUTE_ACCESSORS(UAttack_AttributeSet, Stun)
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Attack_Speed_Multiplyer = 1.f;
+	ATTRIBUTE_ACCESSORS(UAttack_AttributeSet, Attack_Speed_Multiplyer)
+
 };

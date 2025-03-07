@@ -8,7 +8,7 @@
 APickupAble_Item::APickupAble_Item()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	Pickup_Sphere = CreateDefaultSubobject<UInteract_SphereComponent>(TEXT("Pickup_Sphere"));
 	Pickup_Sphere->SetupAttachment(RootComponent);
@@ -21,18 +21,10 @@ void APickupAble_Item::BeginPlay()
 
 }
 //------------------------------------------------------------------------------------------------------------
-// Called every frame
-void APickupAble_Item::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-//------------------------------------------------------------------------------------------------------------
 // 
-void APickupAble_Item::Pickup(Enum_Pickupable_Item & pickupable_item_type, float & amount)
+void APickupAble_Item::Pickup(FPickupableItem_Data& data)
 {
-	pickupable_item_type = Pickupable_Item_Type;
-	amount = Amount;
+	data = Item_Data;
 
 	Destroy();
 }

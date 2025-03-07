@@ -64,7 +64,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Fire_Damage = 1.f;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
+	UPROPERTY(BlueprintReadOnly, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
 	/////////////////////Components

@@ -16,6 +16,15 @@ enum class Enum_Pickupable_Item : uint8
 	EItem_Wick		UMETA(DisplayName="EItem_Wick"),
 	EItem_Wax     UMETA(DisplayName="EItem_Wax"),
 };
+USTRUCT(BlueprintType)
+struct FPickupableItem_Data
+{
+	GENERATED_BODY() 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Amount = 1;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) Enum_Pickupable_Item Item_Type = Enum_Pickupable_Item::EItem_Wax;
+
+};
+
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
 class LIVING_CANDLE_API APickupAble_Item : public AInteractable_Actor
@@ -26,15 +35,11 @@ public:
 	// Sets default values for this actor's properties
 	APickupAble_Item();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable) virtual void Pickup(FPickupableItem_Data& data);
 
-	UFUNCTION(BlueprintCallable) virtual void Pickup(Enum_Pickupable_Item & pickupable_item_type, float & amount);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) FPickupableItem_Data Item_Data;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Amount = 1;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) Enum_Pickupable_Item Pickupable_Item_Type;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) UInteract_SphereComponent * Pickup_Sphere;
+	UPROPERTY(BlueprintReadWrite) UInteract_SphereComponent * Pickup_Sphere;
 
 protected:
 	// Called when the game starts or when spawned

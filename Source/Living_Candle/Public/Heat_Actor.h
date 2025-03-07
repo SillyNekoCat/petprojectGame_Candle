@@ -59,6 +59,7 @@ public:
 	bool do_once = true;
 	////DEBUG
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Debug = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Debug_Screen = false;
 
 	
 	FVector Start_BoxExtent;
@@ -84,6 +85,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Death_OnMaxHeat = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Required_HeatStatus_ForMelting = 1.f;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Melting_InterpSpeed = 2.f;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float ContactCheck_Interval = 0.1f;
@@ -94,7 +97,7 @@ public:
 
 	//////////////Components
 
-	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
+	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) UHeat_Component* Heat_Component;

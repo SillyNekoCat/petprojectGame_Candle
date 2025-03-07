@@ -30,11 +30,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	////////////~ End IAbilitySystemInterface
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Max_HP = 1.0f;//DELETE
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Current_HP = 1.0f;//DELETE
-
 	////////////Components
-	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
+	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Base_AttributeSet;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
 	//UPROPERTY(BlueprintReadWrite, EditAnywhere) UWidgetComponent* Widget_Component;
 

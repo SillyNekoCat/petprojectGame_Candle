@@ -77,7 +77,7 @@ ALiving_CandleCharacter::ALiving_CandleCharacter()
 
 	//
 	AbilitySystem_Comp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem_Comp"));
-
+	
 	//Attributes
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
 	Attack_AttributeSet = CreateDefaultSubobject<UAttack_AttributeSet>(TEXT("Attack_AttributeSet"));
@@ -181,26 +181,26 @@ void ALiving_CandleCharacter::Head_Wick_Collision_BeginOverlap(UPrimitiveCompone
 
 //------------------------------------------------------------------------------------------------------------
 //
-void ALiving_CandleCharacter::Melee_Attack_TraceEnable()
-{
-	if(Attack_Comp->Current_Weapon != nullptr)
-		Attack_Comp->Current_Weapon->Enable_Attack_Trace();
-
-}
+//void ALiving_CandleCharacter::Melee_Attack_TraceEnable()
+//{
+//	if(Attack_Comp->Current_Weapon != nullptr)
+//		Attack_Comp->Current_Weapon->Enable_Attack_Trace();
+//
+//}
 //------------------------------------------------------------------------------------------------------------
 //
-void ALiving_CandleCharacter::Melee_Attack_TraceDisable()
-{
-	if(Attack_Comp->Current_Weapon != nullptr)
-		Attack_Comp->Current_Weapon->Disable_Attack_Trace();
-}
+//void ALiving_CandleCharacter::Melee_Attack_TraceDisable()
+//{
+//	if(Attack_Comp->Current_Weapon != nullptr)
+//		Attack_Comp->Current_Weapon->Disable_Attack_Trace();
+//}
 //------------------------------------------------------------------------------------------------------------
 //Call tracing funcion once from weapon if it exist
-void ALiving_CandleCharacter::Weapon_Trace()
-{
-	if(Attack_Comp->Current_Weapon != nullptr)
-		Attack_Comp->Current_Weapon->Attack_Trace();
-}
+//void ALiving_CandleCharacter::Weapon_Trace()
+//{
+//	if(Attack_Comp->Current_Weapon != nullptr)
+//		Attack_Comp->Current_Weapon->Attack_Trace();
+//}
 //------------------------------------------------------------------------------------------------------------
 void ALiving_CandleCharacter::Move(const FInputActionValue& Value)
 {
@@ -284,7 +284,7 @@ void ALiving_CandleCharacter::On_Action_Use(const FInputActionValue& value)
 
 			distance = FVector::Distance(player_pos, item_pos);
 
-			if (i == 0 || distance < min_distance)//редко вылетает?? при подборе оружия, может это из-за одинаковой дистанции и нужно =<
+			if (i == 0 || distance < min_distance)
 			{
 				min_distance = distance;
 				item = curr_item;
@@ -326,17 +326,13 @@ void ALiving_CandleCharacter::Pickup_Weapon(AMelee_Weapon* weapon)
 
 	Drop_Current_Player_Weapon();
 
-	Attack_Comp->Current_Weapon = weapon;
+	//Attack_Comp->Current_Weapon = weapon;
 
-	Attack_Comp->Current_Weapon->Attach(GetMesh(), this);
+	weapon->Attach(GetMesh(), this);
+
+	//Attack_Comp->Current_Weapon->Attach(GetMesh(), this);
 
 	Have_Weapon = true;
-	
-	////Modify weapon (legacy?? now need use ability system)
-	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Phys_Damage = (Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Phys_Damage + Attack_AttributeSet->GetAdded_Physical_Damage()) * Attack_AttributeSet->GetPhysical_Damage_Multiplier();//modify with Passive tree component
-	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Fire_Damage = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Fire_Damage * 1.0;
-	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Knockback = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Knockback * 1.0;
-	Attack_Comp->Current_Weapon->Weapon_CurrentDamage_Info.Stun = Attack_Comp->Current_Weapon->Weapon_BaseDamage_Info.Stun * 1.0;
 
 }
 //------------------------------------------------------------------------------------------------------------
@@ -346,7 +342,7 @@ void ALiving_CandleCharacter::Drop_Current_Player_Weapon()
 	if (Attack_Comp->Current_Weapon != nullptr)
 	{
 		Attack_Comp->Current_Weapon->Detach();
-		Attack_Comp->Current_Weapon = nullptr;
+		//Attack_Comp->Current_Weapon = nullptr;
 	}
 		
 }
@@ -364,20 +360,19 @@ void ALiving_CandleCharacter::Pickup_Item(APickupAble_Item* item)
 	//item->Pickup();
 	//Wick_Items++;
 
-	Enum_Pickupable_Item pickupable_item_type;
-	float amount = 0;
+	FPickupableItem_Data item_data;
 
-	item->Pickup(pickupable_item_type, amount);
+	item->Pickup(item_data);
 
-	switch(pickupable_item_type)
+	switch(item_data.Item_Type)
 	{
 	case Enum_Pickupable_Item::EItem_Wick: 
 	
-		Wax_System->Update_Wick_Items(amount);
+		Wax_System->Update_Wick_Items(item_data.Amount);
 		break;
 	case Enum_Pickupable_Item::EItem_Wax: 
 
-		Wax_System->Heal_Or_UpdateWaxItems(amount);
+		Wax_System->Heal_Or_UpdateWaxItems(item_data.Amount);
 		break;
 	default: 
 		if(GEngine)

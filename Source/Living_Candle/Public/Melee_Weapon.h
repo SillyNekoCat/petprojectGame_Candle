@@ -77,10 +77,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) TSubclassOf<UGameplayEffect> GE_Damage_ToApply;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) TSubclassOf<UGameplayEffect> GE_Knockback_ToApply;
-	//Need for modify
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) FDamage_Inf Weapon_CurrentDamage_Info;
-	//Need for revert
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Weapon) FDamage_Inf Weapon_BaseDamage_Info;
+
 
 	UPROPERTY(BlueprintReadWrite) AActor* Last_Touched_Actor = nullptr;
 	UPROPERTY(BlueprintReadWrite) AActor* Owner_Of_Weapon = nullptr;

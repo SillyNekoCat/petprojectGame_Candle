@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
+#include "AbilitySystemComponent.h"
 #include "Movement_AttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -19,6 +20,11 @@ class LIVING_CANDLE_API UMovement_AttributeSet : public UAttributeSet
 	GENERATED_BODY()
 public:
 
+	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
+	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue);
+	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Move_Speed") FGameplayAttributeData Move_Speed;
 	ATTRIBUTE_ACCESSORS(UMovement_AttributeSet, Move_Speed)

@@ -44,6 +44,7 @@ enum class Enum_Death_Case : uint8
 	//EDeath_Drowned     UMETA(DisplayName="EDeath_Drown"),//EDeath_Extinguished is the same?
 };
 //------------------------------------------------------------------------------------------------------------
+//Player Character
 UCLASS(config=Game)
 class ALiving_CandleCharacter : public ACharacter, public IAbilitySystemInterface
 {
@@ -63,9 +64,9 @@ public:
 	 
 
 
-	UFUNCTION(BlueprintCallable) void Melee_Attack_TraceEnable();
-	UFUNCTION(BlueprintCallable) void Melee_Attack_TraceDisable();
-	UFUNCTION(BlueprintCallable) void Weapon_Trace();
+	//UFUNCTION(BlueprintCallable) void Melee_Attack_TraceEnable();
+	//UFUNCTION(BlueprintCallable) void Melee_Attack_TraceDisable();
+	//UFUNCTION(BlueprintCallable) void Weapon_Trace();
 	
 	
 	//Pickup or replace current player's weapon
@@ -95,8 +96,8 @@ public:
 	
 	
 	//////////////////////ATTRIBUTES
-	UPROPERTY(BlueprintReadWrite) const UBase_AttributeSet* Base_AttributeSet;
-	UPROPERTY(BlueprintReadWrite) const UAttack_AttributeSet* Attack_AttributeSet;
+	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Base_AttributeSet;
+	UPROPERTY(BlueprintReadOnly) const UAttack_AttributeSet* Attack_AttributeSet;
 	
 
 	//////////////////////COMPONENTS

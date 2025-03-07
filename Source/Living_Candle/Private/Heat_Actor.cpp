@@ -134,7 +134,7 @@ void AHeat_Actor::HeatContact_Damage()
 			float heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(comp_owner);
 			
 			////DEBUG
-			if(Debug)
+			if(Debug && Debug_Screen)
 			{
 				if (GEngine && do_once)
 				{
@@ -238,13 +238,13 @@ void AHeat_Actor::Calculate_Melting_Scale(FVector old_scale, FRotator actor_rota
 void AHeat_Actor::Check_HeatMelting()
 {
 	//Cant Melting
-	if (Can_Melting == false || Heat_Component->Heat_Status_Param < 1.0)
+	if (Can_Melting == false || Heat_Component->Heat_Status_Param < Required_HeatStatus_ForMelting)
 	{
 		Is_Melting = false;
 	}
 
 	//Can Melting  
-	if (Can_Melting == true && Heat_Component->Heat_Status_Param >= 1.0)
+	if (Can_Melting == true && Heat_Component->Heat_Status_Param >= Required_HeatStatus_ForMelting)
 	{
 		Is_Melting = true;
 		

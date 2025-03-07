@@ -7,6 +7,7 @@
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "Attack_Comp.h"
 
 //------------------------------------------------------------------------------------------------------------
 // Sets default values
@@ -71,6 +72,8 @@ void AMelee_Weapon::Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* Overlap
 //
 void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_owner)
 {
+
+
 	USceneComponent *root_component = GetRootComponent();
 
 	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
@@ -91,7 +94,8 @@ void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_own
 	Owner_AttackAttributeSet = Cast<UAttack_AttributeSet>(Owner_ASC->GetAttributeSet(UAttack_AttributeSet::StaticClass()));
 
 	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
-	
+
+	weapon_owner->GetComponentByClass<UAttack_Comp>()->Current_Weapon = this;
 }
 //------------------------------------------------------------------------------------------------------------
 //
@@ -111,7 +115,7 @@ void AMelee_Weapon::Detach()
 		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(true);
 	}
 
-
+	Owner_Of_Weapon->GetComponentByClass<UAttack_Comp>()->Current_Weapon = nullptr;
 	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
 	Owner_Of_Weapon = nullptr;
 	Owner_ASC = nullptr;
@@ -149,7 +153,7 @@ void AMelee_Weapon::Disable_Attack_Trace()
 //validate result of trace
 void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 {
-	FDamage_Inf current_damage = Weapon_CurrentDamage_Info;//Без этого будет неправильный урон
+	
 
 	//Check hits
 	for (int i = 0; i < hits_results.Num(); i++)
