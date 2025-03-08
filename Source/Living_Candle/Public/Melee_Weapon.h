@@ -65,8 +65,10 @@ public:
 	TArray <AActor*> Damage_Actors;
 	TArray <UPrimitiveComponent*> Hit_Components;
 
+	//Effects that applied to hitted actors
+	UPROPERTY(BlueprintReadWrite) TArray<FGameplayEffectSpecHandle> Custom_EffectSpecs;
 
-	//
+	//Using for trace
 	UPROPERTY(BlueprintReadWrite) bool Is_SweepBegin = true;
 
 	//Weapon debug

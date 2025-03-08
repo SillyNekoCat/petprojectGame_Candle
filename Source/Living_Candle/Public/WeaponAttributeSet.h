@@ -29,6 +29,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Weapon_AttackSpeed_Multiplyer = 1.f;
 	ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Weapon_AttackSpeed_Multiplyer)
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Phys_Penetrate = 0.f;
+	ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Phys_Penetrate)
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly) FGameplayAttributeData Fire_Penetrate = 0.f;
+	ATTRIBUTE_ACCESSORS(UWeaponAttributeSet, Fire_Penetrate)
 };

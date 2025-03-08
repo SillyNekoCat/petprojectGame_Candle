@@ -69,12 +69,12 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	EvaluationParameters.TargetTags = target_tags;	
 	
 	//Capturing the weapon damage from Magnitude
-	//float base_phys_damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), false, -1.0f), 0.0f);
-	//float base_fire_damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), false, -1.0f), 0.0f);
-	//float base_pure_damage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure")), false, -1.0f), 0.0f);
-
 	float base_phys_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), true, 0.0f);
+	float base_phys_pen = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Phys_Penetrate")), true, 0.0f);
+
 	float base_fire_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), true, 0.0f);
+	float base_fire_pen = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Fire_Penetrate")), true, 0.0f); 
+
 	float base_pure_damage = Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure")), true, 0.0f);
 
 	//Capturing Block attributes
@@ -85,7 +85,6 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("GEC_DamageExecution FAIL ::: Capturing Phys_Block attributes"));//debug
 	}
 	
-	
 	float fire_block = 0.f;
 	if (!ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().Fire_BlockDef, EvaluationParameters, fire_block))
 	{
@@ -94,14 +93,14 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	}
 
 	////Performing the actual damage calculation
-	float phys_damage_done = base_phys_damage - phys_block;
+	float phys_damage_done = base_phys_damage - (phys_block - base_phys_pen);
 	if (phys_damage_done < 0.f)
 	{
 		phys_damage_done = 0.0f;
 
 	}
 
-	float fire_damage_done = base_fire_damage - fire_block;
+	float fire_damage_done = base_fire_damage - (fire_block - base_fire_pen);
 	if (fire_damage_done < 0.f)
 	{
 		fire_damage_done = 0.0f;
