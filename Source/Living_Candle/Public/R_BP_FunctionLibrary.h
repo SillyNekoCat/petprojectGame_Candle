@@ -27,6 +27,4 @@ public:
 	/** Is_On_Screen */
 	UFUNCTION(BlueprintCallable, Category = "UR_BP_FunctionLibrary|Actor", meta=(WorldContext="world_context_object"))
 	static bool Is_On_Screen(UObject* world_context_object, AActor* target, APlayerController* player_controller);
-
-
 };

@@ -61,18 +61,7 @@ public:
 
 	//Event if something touched head wick
 	UFUNCTION() void Head_Wick_Collision_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	 
-
-
-	//UFUNCTION(BlueprintCallable) void Melee_Attack_TraceEnable();
-	//UFUNCTION(BlueprintCallable) void Melee_Attack_TraceDisable();
-	//UFUNCTION(BlueprintCallable) void Weapon_Trace();
 	
-	
-	//Pickup or replace current player's weapon
-	UFUNCTION(BlueprintCallable) void Pickup_Weapon(AMelee_Weapon* weapon);
-	//Drop the current player's weapon, if any
-	UFUNCTION(BlueprintCallable) void Drop_Current_Player_Weapon();
 
 	UFUNCTION(BlueprintCallable) void Pickup_Item(APickupAble_Item* item);
 
@@ -88,7 +77,7 @@ public:
 
 
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Attack) bool Have_Weapon;
+
 	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Attack) AMelee_Weapon* Current_Weapon; //legacy
 	UPROPERTY(BlueprintReadWrite) TArray<AActor*> Interactable_Actors;
 

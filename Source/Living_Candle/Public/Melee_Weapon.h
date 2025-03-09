@@ -38,8 +38,12 @@ public:
 
 	//UFUNCTION() void AttackTrace_Duration();
 
-	UFUNCTION(BlueprintCallable) void Attach(USkeletalMeshComponent *arms_mesh, AActor *weapon_owner);
-	UFUNCTION(BlueprintCallable) void Detach();
+	//
+	virtual void Interact(AActor* actor) override;
+
+	//CPP Overridable (BlueprintNativeEvent), Need to keep effect specs valid
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void Update_CustomEffectSpecs();
+
 	UFUNCTION(BlueprintCallable) virtual void Enable_Attack_Trace();
 	UFUNCTION(BlueprintCallable) virtual void Disable_Attack_Trace();
 

@@ -21,6 +21,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable) void OnMaxCombo_Reset_Index();
+	UFUNCTION(BlueprintCallable) void Attach_Weapon(AMelee_Weapon* melee_weapon);
+	UFUNCTION(BlueprintCallable) void Detach_CurrentWeapon();
 
 	UPROPERTY(BlueprintReadWrite) bool Can_Attack = true;
 

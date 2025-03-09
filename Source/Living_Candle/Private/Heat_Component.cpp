@@ -17,7 +17,6 @@ UHeat_Component::UHeat_Component()
 	Cooling_Delegate.BindUFunction(this, TEXT("Cooling_Timer"));
 	RetriggCoolingDelay_Delegate.BindUFunction(this, TEXT("Retriggerable_Cooling_Delay"));
 
-
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts

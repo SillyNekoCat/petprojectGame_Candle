@@ -295,12 +295,7 @@ void ALiving_CandleCharacter::On_Action_Use(const FInputActionValue& value)
 		Interactable_Actors.Remove(item);
 	}
 
-	if (APickupAble_Item* pickupable_item = Cast<APickupAble_Item>(item))
-		Pickup_Item(pickupable_item);
-
-	if (AMelee_Weapon* weapon = Cast<AMelee_Weapon>(item))
-		Pickup_Weapon(weapon);
-
+	Cast<AInteractable_Actor>(item)->Interact(this);
 
 }
 //------------------------------------------------------------------------------------------------------------
@@ -316,35 +311,6 @@ void ALiving_CandleCharacter::On_Action_AltAttack(const FInputActionValue &value
 {
 
 
-}
-//------------------------------------------------------------------------------------------------------------
-//Pickup Weapon and modify it
-void ALiving_CandleCharacter::Pickup_Weapon(AMelee_Weapon* weapon)
-{
-	if (weapon == nullptr)
-		return;
-
-	Drop_Current_Player_Weapon();
-
-	//Attack_Comp->Current_Weapon = weapon;
-
-	weapon->Attach(GetMesh(), this);
-
-	//Attack_Comp->Current_Weapon->Attach(GetMesh(), this);
-
-	Have_Weapon = true;
-
-}
-//------------------------------------------------------------------------------------------------------------
-//Drop the current player's weapon, if any
-void ALiving_CandleCharacter::Drop_Current_Player_Weapon()
-{
-	if (Attack_Comp->Current_Weapon != nullptr)
-	{
-		Attack_Comp->Current_Weapon->Detach();
-		//Attack_Comp->Current_Weapon = nullptr;
-	}
-		
 }
 //------------------------------------------------------------------------------------------------------------
 //
@@ -393,7 +359,6 @@ void ALiving_CandleCharacter::Death(Enum_Death_Case e_death_case)
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Extinguished. the body will stay"));//debug
 		break;
 	case Enum_Death_Case::EDeath_WaxLoss: //death from health(wax) loss. the body won't stay
-		Drop_Current_Player_Weapon();
 		Destroy();
 		if(GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Wax Loss. the body won't stay"));//debug 

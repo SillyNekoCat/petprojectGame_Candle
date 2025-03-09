@@ -7,6 +7,7 @@
 #include "Interact_CapsuleComponent.h"
 #include "Interact_BoxComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameFramework/Character.h"
 #include "Attack_Comp.h"
 
 //------------------------------------------------------------------------------------------------------------
@@ -32,13 +33,16 @@ AMelee_Weapon::AMelee_Weapon()
 	//
 	Base_AttributeSet = CreateDefaultSubobject<UBase_AttributeSet>(TEXT("Base_AttributeSet"));
 
-	
+
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned
 void AMelee_Weapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//
+	On_Interact.AddDynamic(this, &ThisClass::Update_CustomEffectSpecs);
 
 	//Trace_Delegate.BindUFunction(this, TEXT("Attack_Trace"));
 	
@@ -70,57 +74,77 @@ void AMelee_Weapon::Weapon_Hit_Capsule_BeginOverlap(UPrimitiveComponent* Overlap
 }
 //------------------------------------------------------------------------------------------------------------
 //
-void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_owner)
+void AMelee_Weapon::Interact(AActor* actor)
 {
+	UAttack_Comp* attack_comp = actor->GetComponentByClass<UAttack_Comp>();
 
+	if(!IsValid(attack_comp))
+		return;
 
-	USceneComponent *root_component = GetRootComponent();
-
-	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
-	{//Collision setup for attached weapon
-		prim_component->SetSimulatePhysics(false);
-		//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(false);
-	}
-
-	// Attach to character
-	FAttachmentTransformRules attachment_rules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(arms_mesh, attachment_rules, FName(TEXT("Weapon_Socket")));
-
-	Owner_Of_Weapon = weapon_owner;
-	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
-	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
-	Owner_AttackAttributeSet = Cast<UAttack_AttributeSet>(Owner_ASC->GetAttributeSet(UAttack_AttributeSet::StaticClass()));
-
-	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
-
-	weapon_owner->GetComponentByClass<UAttack_Comp>()->Current_Weapon = this;
+	//Drop current weapon
+	attack_comp->Detach_CurrentWeapon();
+	
+	//Pickup this weapon
+	attack_comp->Attach_Weapon(this);
 }
 //------------------------------------------------------------------------------------------------------------
 //
-void AMelee_Weapon::Detach()
+void AMelee_Weapon::Update_CustomEffectSpecs_Implementation()
 {
 
-	USceneComponent *root_component = GetRootComponent();
-
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
-	{//Collision setup for detached weapon
-		prim_component->SetSimulatePhysics(true);
-		
-
-		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(true);
-	}
-
-	Owner_Of_Weapon->GetComponentByClass<UAttack_Comp>()->Current_Weapon = nullptr;
-	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
-	Owner_Of_Weapon = nullptr;
-	Owner_ASC = nullptr;
-	Owner_AttackAttributeSet = nullptr;
 }
+//------------------------------------------------------------------------------------------------------------
+//
+//void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_owner, UAttack_Comp* attack_comp)
+//{
+//
+//
+//	USceneComponent *root_component = GetRootComponent();
+//
+//	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
+//	{//Collision setup for attached weapon
+//		prim_component->SetSimulatePhysics(false);
+//		//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+//		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+//		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(false);
+//	}
+//
+//	// Attach to character
+//	FAttachmentTransformRules attachment_rules(EAttachmentRule::SnapToTarget, true);
+//	AttachToComponent(arms_mesh, attachment_rules, FName(TEXT("Weapon_Socket")));
+//
+//	Owner_Of_Weapon = weapon_owner;
+//	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
+//	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
+//	Owner_AttackAttributeSet = Cast<UAttack_AttributeSet>(Owner_ASC->GetAttributeSet(UAttack_AttributeSet::StaticClass()));
+//
+//	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
+//
+//	attack_comp->Current_Weapon = this;
+//}
+//------------------------------------------------------------------------------------------------------------
+//
+//void AMelee_Weapon::Detach(UAttack_Comp* attack_comp)
+//{
+//	USceneComponent *root_component = GetRootComponent();
+//
+//	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+//
+//	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
+//	{//Collision setup for detached weapon
+//		prim_component->SetSimulatePhysics(true);
+//		
+//
+//		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+//		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(true);
+//	}
+//
+//	attack_comp->Current_Weapon = nullptr;
+//	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
+//	Owner_Of_Weapon = nullptr;
+//	Owner_ASC = nullptr;
+//	Owner_AttackAttributeSet = nullptr;
+//}
 //------------------------------------------------------------------------------------------------------------
 //
 void AMelee_Weapon::Enable_Attack_Trace()
