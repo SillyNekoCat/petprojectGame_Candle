@@ -35,7 +35,9 @@ public:
 	// Sets default values for this actor's properties
 	APickupAble_Item();
 
-	UFUNCTION(BlueprintCallable) virtual void Pickup(FPickupableItem_Data& data);
+	virtual void Interact(AActor* actor) override;
+
+
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) FPickupableItem_Data Item_Data;
 

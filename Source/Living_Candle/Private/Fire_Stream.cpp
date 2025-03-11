@@ -104,11 +104,23 @@ void AFire_Stream::Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	//Capsule->GetOverlappingActors(Overlapping_Actors);
 
+	//нужна проверка на то какой компонент оверлапнулся
+	
+
+	//if (!Cast<UInteract_SphereComponent>(OverlappedComponent) && !Cast<UInteract_CapsuleComponent>(OverlappedComponent) && !Cast<UInteract_BoxComponent>(OverlappedComponent))
+
+
 	if(Owner_A == nullptr || OtherActor != Owner_A)
 	{
-		if (!Dealing_DamageOverTime_TimerHandle.IsValid() )
+
+		if (!Dealing_DamageOverTime_TimerHandle.IsValid())
+		{
+			Dealing_DamageOverTime();
 			Set_Dealing_DamageOverTime_Timer();
+		}
+	
 	}
+
 	
 
 }
@@ -164,15 +176,7 @@ void AFire_Stream::Dealing_DamageOverTime()
 	{
 		if (damage_actors[i] != nullptr)
 		{
-			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(damage_actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
-			{
-				//ascs_apply_damage.Add(asc_damage_actor);
-
-				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage, 0, Owner_ASC->MakeEffectContext()).Data.Get();
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Fire_Damage);
-				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
-			}
-
+			Apply_FireDamage(damage_actors[i]);
 		}
 	}
 
@@ -193,6 +197,17 @@ void AFire_Stream::Dealing_DamageOverTime()
 void AFire_Stream::Clear_Dealing_DamageOverTime_Timer()
 {
 	GetWorldTimerManager().ClearTimer(Dealing_DamageOverTime_TimerHandle);
+}
+//------------------------------------------------------------------------------------------------------------
+//Calculate similar shapes for capsule and trace path
+void AFire_Stream::Apply_FireDamage(AActor* damage_actor)
+{
+	if (UAbilitySystemComponent* asc_damage_actor = damage_actor->GetComponentByClass<UAbilitySystemComponent>())
+	{
+		FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+		GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Fire_Damage);
+		Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
+	}
 }
 //------------------------------------------------------------------------------------------------------------
 //Calculate similar shapes for capsule and trace path

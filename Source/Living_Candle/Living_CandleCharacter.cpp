@@ -245,19 +245,8 @@ void ALiving_CandleCharacter::On_Action_Use(const FInputActionValue& value)
 	double distance, min_distance = 0;
 	AActor* item, * curr_item;
 	FVector player_pos, item_pos;
-	//FHitResult hit_result;
 
 	GetCapsuleComponent()->GetOverlappingActors(Interactable_Actors, TSubclassOf<AInteractable_Actor>(AInteractable_Actor::StaticClass()) );
-
-	//if(Pickup_Trace_Debug == false)//pickup using trace TEMP
-	//{
-	//	UKismetSystemLibrary::SphereTraceSingle(this, FVector(0.0, 0.0, 0.0), FVector(0.0, 0.0, 0.0), Pickup_Range, ETraceTypeQuery::TraceTypeQuery1, false, TArray<AActor*>(), EDrawDebugTrace::None, hit_result, true);
-	//}
-	//else
-	//{
-	//	UKismetSystemLibrary::SphereTraceMulti(this,FVector(0.0, 0.0, 0.0), FVector(0.0, 0.0, 0.0), Pickup_Range, ETraceTypeQuery::TraceTypeQuery1, false, TArray<AActor*>(), EDrawDebugTrace::ForDuration, hit_result, true, FLinearColor::Red, FLinearColor::Green, Pickup_Debug_Duration);
-	//}
-	//item = hit_result.GetActor();
 
 	Interactable_Actors.Remove(this);
 
@@ -314,39 +303,39 @@ void ALiving_CandleCharacter::On_Action_AltAttack(const FInputActionValue &value
 }
 //------------------------------------------------------------------------------------------------------------
 //
-void ALiving_CandleCharacter::Pickup_Item(APickupAble_Item* item)
-{
-	if (item == nullptr) 
-	{
-
-		return;
-	}
-
-
-	//item->Pickup();
-	//Wick_Items++;
-
-	FPickupableItem_Data item_data;
-
-	item->Pickup(item_data);
-
-	switch(item_data.Item_Type)
-	{
-	case Enum_Pickupable_Item::EItem_Wick: 
-	
-		Wax_System->Update_Wick_Items(item_data.Amount);
-		break;
-	case Enum_Pickupable_Item::EItem_Wax: 
-
-		Wax_System->Heal_Or_UpdateWaxItems(item_data.Amount);
-		break;
-	default: 
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("pickup type is undefined."));
-		break;
-	}
-
-}
+//void ALiving_CandleCharacter::Pickup_Item(APickupAble_Item* item)
+//{
+//	if (item == nullptr) 
+//	{
+//
+//		return;
+//	}
+//
+//
+//	//item->Pickup();
+//	//Wick_Items++;
+//
+//	FPickupableItem_Data item_data;
+//
+//	item->Pickup(item_data);
+//
+//	switch(item_data.Item_Type)
+//	{
+//	case Enum_Pickupable_Item::EItem_Wick: 
+//	
+//		Wax_System->Update_Wick_Items(item_data.Amount);
+//		break;
+//	case Enum_Pickupable_Item::EItem_Wax: 
+//
+//		Wax_System->Heal_Or_UpdateWaxItems(item_data.Amount);
+//		break;
+//	default: 
+//		if(GEngine)
+//			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("pickup type is undefined."));
+//		break;
+//	}
+//
+//}
 //------------------------------------------------------------------------------------------------------------
 //What will happen before destroying
 void ALiving_CandleCharacter::Death(Enum_Death_Case e_death_case)

@@ -33,6 +33,7 @@ public:
 	UFUNCTION() void Dealing_DamageOverTime(); // timer function
 	UFUNCTION(BlueprintCallable) void Clear_Dealing_DamageOverTime_Timer();
 	UFUNCTION(BlueprintCallable) void Calculate_CapsuleTraceShapes();
+	UFUNCTION(BlueprintCallable) void Apply_FireDamage(AActor* damage_actor);
 
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 

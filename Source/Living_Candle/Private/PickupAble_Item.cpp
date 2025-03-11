@@ -2,6 +2,7 @@
 
 
 #include "PickupAble_Item.h"
+#include "Wax_System_Comp.h"
 
 //------------------------------------------------------------------------------------------------------------
 // Sets default values
@@ -22,9 +23,31 @@ void APickupAble_Item::BeginPlay()
 }
 //------------------------------------------------------------------------------------------------------------
 // 
-void APickupAble_Item::Pickup(FPickupableItem_Data& data)
+void APickupAble_Item::Interact(AActor* actor)
 {
-	data = Item_Data;
+	UWax_System_Comp* wax_system = actor->GetComponentByClass<UWax_System_Comp>();
+
+	if(!IsValid(wax_system))
+		return;
+
+	switch(Item_Data.Item_Type)
+	{
+	case Enum_Pickupable_Item::EItem_Wick: 
+
+		wax_system->Update_Wick_Items(Item_Data.Amount);
+		break;
+	case Enum_Pickupable_Item::EItem_Wax: 
+
+		wax_system->Heal_Or_UpdateWaxItems(Item_Data.Amount);
+		break;
+	default: 
+		if(GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("pickup type is undefined."));
+		break;
+	}
+
+
+	On_Interact.Broadcast();
 
 	Destroy();
 }

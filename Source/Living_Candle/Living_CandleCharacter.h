@@ -63,7 +63,7 @@ public:
 	UFUNCTION() void Head_Wick_Collision_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	
 
-	UFUNCTION(BlueprintCallable) void Pickup_Item(APickupAble_Item* item);
+	//UFUNCTION(BlueprintCallable) void Pickup_Item(APickupAble_Item* item);
 
 	//What will happen before destroy
 	UFUNCTION(BlueprintCallable) void Death(Enum_Death_Case e_death_case = Enum_Death_Case::EDeath_None);
