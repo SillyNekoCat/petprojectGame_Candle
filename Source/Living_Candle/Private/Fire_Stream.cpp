@@ -102,13 +102,7 @@ void AFire_Stream::Tick(float DeltaTime)
 void AFire_Stream::Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	//Capsule->GetOverlappingActors(Overlapping_Actors);
-
-	//нужна проверка на то какой компонент оверлапнулся
 	
-
-	//if (!Cast<UInteract_SphereComponent>(OverlappedComponent) && !Cast<UInteract_CapsuleComponent>(OverlappedComponent) && !Cast<UInteract_BoxComponent>(OverlappedComponent))
-
 
 	if(Owner_A == nullptr || OtherActor != Owner_A)
 	{

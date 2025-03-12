@@ -40,10 +40,10 @@ void AMace::Attack_Trace()
 	TArray <FHitResult> hits_results;
 
 	UWorld* world = GetWorld();
-	FCollisionShape shape = FCollisionShape::MakeSphere(Trace_Radius);
-	FCollisionQueryParams collision_query_params = FCollisionQueryParams(FName(TEXT("BoxTraceMulti")), false);
-	collision_query_params.AddIgnoredActors(Weapon_Ignored_Actors);
-	//collision_query_params.AddIgnoredComponents();
+	//FCollisionShape shape = FCollisionShape::MakeSphere(Trace_Radius);
+	//FCollisionQueryParams collision_query_params = FCollisionQueryParams(FName(TEXT("BoxTraceMulti")), false);
+	//collision_query_params.AddIgnoredActors(Weapon_Ignored_Actors);
+	
 
 	FVector start_socket_loc = Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket"));
 
@@ -53,31 +53,22 @@ void AMace::Attack_Trace()
 		Old_ActorRotation = GetActorRotation();
 	}
 
-	if (bool is_hit = world->SweepMultiByChannel(hits_results, StartSweepLoc_Old, start_socket_loc, Old_ActorRotation.Quaternion(), ECC_GameTraceChannel1, shape, collision_query_params))
+	//if (bool is_hit = world->SweepMultiByChannel(hits_results, StartSweepLoc_Old, start_socket_loc, Old_ActorRotation.Quaternion(), ECC_GameTraceChannel1, shape, collision_query_params))
+	//{
+	//	if(Weapon_Trace_Debug)
+	//		DrawDebugSphereTraceMulti(world, StartSweepLoc_Old, start_socket_loc, Trace_Radius, EDrawDebugTrace::ForDuration, is_hit, hits_results, FColor::Purple, FColor::Green, Weapon_Trace_Debug_Duration);
+	//}
+
+
+	//Is this better??
+	if(Weapon_Trace_Debug == false)
 	{
-		if(Weapon_Trace_Debug)
-			DrawDebugSphereTraceMulti(world, StartSweepLoc_Old, start_socket_loc, Trace_Radius, EDrawDebugTrace::ForDuration, is_hit, hits_results, FColor::Purple, FColor::Green, Weapon_Trace_Debug_Duration);
+		UKismetSystemLibrary::SphereTraceMulti(this, StartSweepLoc_Old, start_socket_loc, Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::None, hits_results, true);
 	}
-
-
-	////Is this better??
-	//if(Weapon_Trace_Debug == false)
-	//{
-	//	UKismetSystemLibrary::SphereTraceMulti(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, Is_Trace_Complex, Weapon_Ignored_Actors, EDrawDebugTrace::None, hits_results, true);
-	//	//UKismetSystemLibrary::SphereTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")),  Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, Is_Trace_Complex, Weapon_Ignored_Actors, EDrawDebugTrace::None, hit_result, true);
-	//	//UKismetSystemLibrary::BoxTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")),  Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Shape_HalfSize, Shape_Rotator, ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::None, hit_result, true);
-	//	//UKismetSystemLibrary::LineTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::None, hit_result, true);
-	//}
-	//else
-	//{
-	//	UKismetSystemLibrary::SphereTraceMulti(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, Is_Trace_Complex, Weapon_Ignored_Actors, EDrawDebugTrace::ForDuration, hits_results, true, FLinearColor::Red, FLinearColor::Green, Weapon_Trace_Debug_Duration);
-	//	//UKismetSystemLibrary::SphereTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, Is_Trace_Complex, Weapon_Ignored_Actors, EDrawDebugTrace::ForDuration, hit_result, true, FLinearColor::Red, FLinearColor::Green, Weapon_Trace_Debug_Duration);
-	//	//UKismetSystemLibrary::BoxTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")),  Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), Shape_HalfSize, Shape_Rotator, ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::ForDuration, hit_result, true, FLinearColor::Red, FLinearColor::Green, Weapon_Trace_Debug_Duration);
-	//	//UKismetSystemLibrary::LineTraceSingle(this, Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("StartTraceSocket")), Weapon_Skeletal_Mesh->GetSocketLocation(TEXT("EndTraceSocket")), ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::ForDuration, hit_result, true, FLinearColor::Red, FLinearColor::Green, Weapon_Trace_Debug_Duration);
-	//}
-
-
-	
+	else
+	{
+		UKismetSystemLibrary::SphereTraceMulti(this, StartSweepLoc_Old, start_socket_loc, Trace_Radius, ETraceTypeQuery::TraceTypeQuery1, false, Weapon_Ignored_Actors, EDrawDebugTrace::ForDuration, hits_results, true, FLinearColor::Red, FLinearColor::Green, Weapon_Trace_Debug_Duration);
+	}
 
 	Old_ActorRotation = GetActorRotation();
 	StartSweepLoc_Old = start_socket_loc;
