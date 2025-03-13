@@ -3,9 +3,6 @@
 
 #include "Mace.h"
 #include "Heat_Component.h"
-#include "Interact_CapsuleComponent.h"
-#include "Interact_BoxComponent.h"
-#include "Interact_SphereComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 
 

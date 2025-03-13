@@ -10,7 +10,7 @@
 #include "Attack_AttributeSet.h"
 #include "Base_AttributeSet.h"
 #include "Interactable_Actor.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Heat_Component.h"
 #include "KismetTraceUtils.h"
 #include "GameFramework/Actor.h"
@@ -21,7 +21,7 @@ class UAbilitySystemComponent;
 class UWeaponAttributeSet;
 class UBase_AttributeSet;
 class USkeletalMeshComponent;
-class UInteract_SphereComponent;
+class USphereComponent;
 //------------------------------------------------------------------------------------------------------------
 UCLASS()
 class LIVING_CANDLE_API AMelee_Weapon : /*public AActor,*/ public AInteractable_Actor, public IAbilitySystemInterface
@@ -110,7 +110,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) USkeletalMeshComponent* Weapon_Skeletal_Mesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UInteract_SphereComponent * Weapon_Pickup_Sphere;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) USphereComponent * Weapon_PickupSphere;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* Weapon_AbilitySystemComp;
 

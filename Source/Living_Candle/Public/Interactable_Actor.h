@@ -9,7 +9,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteract_Delegate);
 UCLASS()
 class LIVING_CANDLE_API AInteractable_Actor : public AActor
-{//—корее всего этот класс костыль
+{
 	GENERATED_BODY()
 
 public:	

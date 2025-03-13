@@ -27,11 +27,13 @@ AFire_Stream::AFire_Stream()
 	//End_Point->AttachToComponent(Start_Point, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 
 
-	//Capsule
-	Capsule = CreateDefaultSubobject<UInteract_CapsuleComponent>(TEXT("Capsule"));
-	Capsule->SetupAttachment(Start_Point);
-	//Capsule->AttachToComponent(Start_Point, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	Capsule->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Capsule_BeginOverlap);
+	//Flame_Trigger_Capsule
+	Flame_Trigger_Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Flame_Trigger_Capsule")); 
+	Flame_Trigger_Capsule->SetupAttachment(Start_Point);
+	Flame_Trigger_Capsule->ComponentTags.Add(TEXT("Ignore_Damage"));
+
+	//Flame_Trigger_Capsule->AttachToComponent(Start_Point, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	Flame_Trigger_Capsule->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Capsule_BeginOverlap);
 
 	//ASC
 	Owner_ASC = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
@@ -45,17 +47,19 @@ void AFire_Stream::OnConstruction(const FTransform &Transform)
 
 	this->SetActorScale3D(FVector(1.0, 1.0, 1.0) );
 	End_Point->SetRelativeLocation(FVector(0.0, 0.0, Length));
-	Calculate_CapsuleTraceShapes();
+	
+	if (IsValid(Flame_Trigger_Capsule))
+		Calculate_CapsuleTraceShapes();
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts
 void AFire_Stream::BeginPlay()
 {
 	Super::BeginPlay();
-	
 	//Setup Visibility
-	Capsule->SetHiddenInGame(Is_Capsule_HiddenInGame);
-
+	if (IsValid(Flame_Trigger_Capsule))
+		Flame_Trigger_Capsule->SetHiddenInGame(Is_Capsule_HiddenInGame);
+	
 	//Get Owner
 	Owner_A = GetParentActor();
 	if (IsValid(Owner_A) )
@@ -84,7 +88,7 @@ void AFire_Stream::BeginPlay()
 	Dealing_DamageOverTime_Delegate.BindUFunction(this, TEXT("Dealing_DamageOverTime"));
 
 	//Check overlap on spawn
-	//Capsule->GetOverlappingActors(Overlapping_Actors);
+	//Flame_Trigger_Capsule->GetOverlappingActors(Overlapping_Actors);
 	//if (!Dealing_DamageOverTime_TimerHandle.IsValid() && Overlapping_Actors.IsEmpty() != true)
 	Set_Dealing_DamageOverTime_Timer();
 
@@ -98,7 +102,7 @@ void AFire_Stream::Tick(float DeltaTime)
 	
 }
 //------------------------------------------------------------------------------------------------------------
-//Event called when something starts to overlap Capsule
+//Event called when something starts to overlap Flame_Trigger_Capsule
 void AFire_Stream::Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
@@ -158,7 +162,7 @@ void AFire_Stream::Dealing_DamageOverTime()
 	for (int i = 0; i < hits_results.Num() ; i++) 
 	{
 
-		if (!Cast<UInteract_SphereComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_CapsuleComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_BoxComponent>(hits_results[i].GetComponent()))
+		if (!hits_results[i].GetComponent()->ComponentHasTag(TEXT("Ignore_Damage")) )
 		{
 			damage_actors.AddUnique(hits_results[i].GetActor());
 		}
@@ -175,7 +179,7 @@ void AFire_Stream::Dealing_DamageOverTime()
 	}
 
 	//Clear timer if no overlapping actors, exept owner
-	//Capsule->GetOverlappingActors(Overlapping_Actors);
+	//Flame_Trigger_Capsule->GetOverlappingActors(Overlapping_Actors);
 	//if (IsValid(Owner_A))
 		//Overlapping_Actors.Remove(Owner_A); //dissapears on player after first trace
 
@@ -196,6 +200,9 @@ void AFire_Stream::Clear_Dealing_DamageOverTime_Timer()
 //Calculate similar shapes for capsule and trace path
 void AFire_Stream::Apply_FireDamage(AActor* damage_actor)
 {
+	if(!IsValid(Owner_ASC))
+		return;
+
 	if (UAbilitySystemComponent* asc_damage_actor = damage_actor->GetComponentByClass<UAbilitySystemComponent>())
 	{
 		FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage, 0, Owner_ASC->MakeEffectContext()).Data.Get();
@@ -212,9 +219,9 @@ void AFire_Stream::Calculate_CapsuleTraceShapes()
 
 	double length_of_vectors_difference = (Start_Loc - End_Loc).Length();
 
-	Capsule->SetCapsuleSize(Radius, (length_of_vectors_difference / 2.0) + Radius, true);
-	//Capsule->AddLocalOffset(FVector(0.0, 0.0, length_of_vectors_difference / 2.0));
-	Capsule->SetRelativeLocation(FVector(0.0, 0.0, length_of_vectors_difference / 2.0));
+	Flame_Trigger_Capsule->SetCapsuleSize(Radius, (length_of_vectors_difference / 2.0) + Radius, true);
+	//Flame_Trigger_Capsule->AddLocalOffset(FVector(0.0, 0.0, length_of_vectors_difference / 2.0));
+	Flame_Trigger_Capsule->SetRelativeLocation(FVector(0.0, 0.0, length_of_vectors_difference / 2.0));
 }
 //------------------------------------------------------------------------------------------------------------
 //

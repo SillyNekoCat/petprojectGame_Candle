@@ -7,10 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "Base_AttributeSet.h" 
-#include "Interact_CapsuleComponent.h"
-#include "Interact_BoxComponent.h"
-#include "Interact_SphereComponent.h"
-//#include "Components/ShapeComponent.h"
+#include "Components/BoxComponent.h"
 #include "Heat_Actor.generated.h"
 
 //DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_Take, FDamage_Inf, bool);//TEMP old

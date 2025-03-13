@@ -11,8 +11,9 @@ APickupAble_Item::APickupAble_Item()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	Pickup_Sphere = CreateDefaultSubobject<UInteract_SphereComponent>(TEXT("Pickup_Sphere"));
-	Pickup_Sphere->SetupAttachment(RootComponent);
+	PickupTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("PickupTrigger"));
+	PickupTrigger->ComponentTags.Add(TEXT("Ignore_Damage"));
+	PickupTrigger->SetupAttachment(RootComponent);
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts or when spawned

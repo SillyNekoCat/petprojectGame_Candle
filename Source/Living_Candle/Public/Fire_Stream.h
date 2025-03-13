@@ -7,12 +7,11 @@
 #include "GameFramework/Actor.h" 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
-#include "Interact_CapsuleComponent.h"
-#include "Interact_BoxComponent.h"
-#include "Interact_SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Fire_Stream.generated.h"
+
+class UCapsuleComponent;
 class UAbilitySystemComponent;
-class UInteract_CapsuleComponent;
 class USceneComponent;
 
 UCLASS()
@@ -69,7 +68,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
 	/////////////////////Components
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) UInteract_CapsuleComponent * Capsule;
+	UPROPERTY(BlueprintReadWrite, Category = FireStream) UCapsuleComponent * Flame_Trigger_Capsule;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * Start_Point;
 	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * End_Point;
 

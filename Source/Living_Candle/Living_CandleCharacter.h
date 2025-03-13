@@ -9,20 +9,16 @@
 #include "AbilitySystemInterface.h"
 #include "Base_AttributeSet.h" 
 #include "Attack_AttributeSet.h"
-//#include "PlayerCandle_AttributeSet.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Living_CandleCharacter.generated.h"
-//class UPlayerCandle_AttributeSet;//
 class UBase_AttributeSet;
 class UAttack_AttributeSet;
 class UAbilitySystemComponent;
 class UWax_System_Comp;
-//class UAttack_Comp;
 class USphereComponent;
-class UInteract_SphereComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -96,7 +92,7 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, Category = "Abilities") UAbilitySystemComponent* AbilitySystem_Comp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UInteract_SphereComponent* Head_Wick_Collision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) USphereComponent* Head_Trigger;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UWidgetComponent* Player_Widget_HUD;
 

@@ -127,7 +127,7 @@ void AHeat_Actor::HeatContact_Damage()
 	for (int i = 0; i < overlapping_components.Num(); i++)
 	{
 
-		if (!Cast<UInteract_SphereComponent>(overlapping_components[i]) && !Cast<UInteract_CapsuleComponent>(overlapping_components[i]) && !Cast<UInteract_BoxComponent>(overlapping_components[i]) )
+		if (!overlapping_components[i]->ComponentHasTag(TEXT("Ignore_Damage")) )
 		{
 			AActor* comp_owner = overlapping_components[i]->GetOwner();
 			

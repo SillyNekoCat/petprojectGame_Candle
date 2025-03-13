@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-//#include "GameFramework/Actor.h"//Interactable_Actor является наследником Actor
+#include "Components/SphereComponent.h"
 #include "Interactable_Actor.h"
-#include "Interact_SphereComponent.h"
 #include "PickupAble_Item.generated.h"
 
-class UInteract_SphereComponent;
+class USphereComponent;
 //------------------------------------------------------------------------------------------------------------
 UENUM(BlueprintType)   
 enum class Enum_Pickupable_Item : uint8
@@ -41,7 +40,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) FPickupableItem_Data Item_Data;
 
-	UPROPERTY(BlueprintReadWrite) UInteract_SphereComponent * Pickup_Sphere;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) USphereComponent * PickupTrigger;
 
 protected:
 	// Called when the game starts or when spawned

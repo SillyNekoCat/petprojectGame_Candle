@@ -2,7 +2,6 @@
 
 
 #include "Attack_Comp.h"
-#include "Interact_SphereComponent.h"
 #include "GameFramework/Character.h"
 //------------------------------------------------------------------------------------------------------------
 // Sets default values for this component's properties
@@ -54,10 +53,12 @@ void UAttack_Comp::Attach_Weapon(AMelee_Weapon* melee_weapon)
 
 	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
 	{//Collision setup for attached weapon
-		prim_component->SetSimulatePhysics(false);
-		//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-		melee_weapon->Weapon_Pickup_Sphere->SetGenerateOverlapEvents(false);
+
+			prim_component->SetSimulatePhysics(false);
+			//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+			prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			melee_weapon->Weapon_PickupSphere->SetGenerateOverlapEvents(false);
+
 	}
 
 	// Attach to character
@@ -91,7 +92,7 @@ void UAttack_Comp::Detach_CurrentWeapon()
 
 
 		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		Current_Weapon->Weapon_Pickup_Sphere->SetGenerateOverlapEvents(true);
+		Current_Weapon->Weapon_PickupSphere->SetGenerateOverlapEvents(true);
 	}
 
 	

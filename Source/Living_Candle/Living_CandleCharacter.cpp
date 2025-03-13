@@ -7,10 +7,6 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Water_Actor.h"
-#include "Interact_CapsuleComponent.h"
-#include "Interact_BoxComponent.h"
-#include "Interact_SphereComponent.h"
-//#include "AInteractable_Actor.h"
 #include "Melee_Weapon.h"
 #include "PickupAble_Item.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,7 +15,6 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,11 +57,11 @@ ALiving_CandleCharacter::ALiving_CandleCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 
-
-	//Create a Head_Wick_Collision and Begin Overlap Event
-	Head_Wick_Collision = CreateDefaultSubobject<UInteract_SphereComponent>(TEXT("Head_Wick_Collision"));
-	Head_Wick_Collision->SetupAttachment(GetMesh(),TEXT("Head_Wick_Collision_Socket"));
-	Head_Wick_Collision->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Head_Wick_Collision_BeginOverlap);
+	//Create a Head_Trigger and Begin Overlap Event
+	Head_Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("Head_Trigger"));
+	Head_Trigger->ComponentTags.Add(TEXT("Ignore_Damage"));
+	Head_Trigger->SetupAttachment(GetMesh(),TEXT("Head_Wick_Collision_Socket"));
+	Head_Trigger->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::Head_Wick_Collision_BeginOverlap);
 
 	//
 	Player_Widget_HUD = CreateDefaultSubobject<UWidgetComponent>(TEXT("Player_Widget_HUD"));

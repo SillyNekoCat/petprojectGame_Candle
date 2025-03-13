@@ -3,9 +3,6 @@
 
 #include "Melee_Weapon.h"
 #include "Engine/SkeletalMeshSocket.h"
-#include "Interact_SphereComponent.h"
-#include "Interact_CapsuleComponent.h"
-#include "Interact_BoxComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameFramework/Character.h"
 #include "Attack_Comp.h"
@@ -18,12 +15,14 @@ AMelee_Weapon::AMelee_Weapon()
 	//PrimaryActorTick.bCanEverTick = true;
 
 	//Revert_Weapon_Damage_Info();
-
+	
+	//
 	Weapon_Skeletal_Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon_Skeletal_Mesh"));
 
-	Weapon_Pickup_Sphere = CreateDefaultSubobject<UInteract_SphereComponent>(TEXT("Weapon_Pickup_Sphere"));
-	//Weapon_Pickup_Sphere->SetSphereRadius(10.f);
-	Weapon_Pickup_Sphere->SetupAttachment(Weapon_Skeletal_Mesh);
+	//
+	Weapon_PickupSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Weapon_PickupSphere"));
+	Weapon_PickupSphere->ComponentTags.Add(TEXT("Ignore_Damage"));
+	Weapon_PickupSphere->SetupAttachment(Weapon_Skeletal_Mesh);
 
 	//
 	Weapon_AbilitySystemComp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("Weapon_AbilitySystemComp"));
@@ -106,7 +105,7 @@ void AMelee_Weapon::Update_CustomEffectSpecs_Implementation()
 //		prim_component->SetSimulatePhysics(false);
 //		//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 //		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-//		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(false);
+//		Weapon_PickupSphere->SetGenerateOverlapEvents(false);
 //	}
 //
 //	// Attach to character
@@ -136,7 +135,7 @@ void AMelee_Weapon::Update_CustomEffectSpecs_Implementation()
 //		
 //
 //		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-//		Weapon_Pickup_Sphere->SetGenerateOverlapEvents(true);
+//		Weapon_PickupSphere->SetGenerateOverlapEvents(true);
 //	}
 //
 //	attack_comp->Current_Weapon = nullptr;
@@ -183,7 +182,7 @@ void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 	for (int i = 0; i < hits_results.Num(); i++)
 	{
 
-		if (!Cast<UInteract_SphereComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_CapsuleComponent>(hits_results[i].GetComponent()) && !Cast<UInteract_BoxComponent>(hits_results[i].GetComponent()))
+		if (!hits_results[i].GetComponent()->ComponentHasTag(TEXT("Ignore_Damage")))
 		{
 			Damage_Actors.AddUnique(hits_results[i].GetActor());
 			Hit_Components.AddUnique(hits_results[i].GetComponent());
