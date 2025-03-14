@@ -28,6 +28,7 @@ public:
 
 	UFUNCTION() void Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
+	UFUNCTION(BlueprintCallable) void Check_EnableOrDisable();
 	UFUNCTION(BlueprintCallable) void Set_Dealing_DamageOverTime_Timer();
 	UFUNCTION() void Dealing_DamageOverTime(); // timer function
 	UFUNCTION(BlueprintCallable) void Clear_Dealing_DamageOverTime_Timer();
@@ -52,25 +53,25 @@ public:
 	//Use self-created asc if owner does'nt exist
 	UPROPERTY(BlueprintReadWrite) UAbilitySystemComponent* Owner_ASC;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) bool Ignore_Owner = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Ignore_Owner = true;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) bool Is_TraceIgnoreSelf = true;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) bool Is_Capsule_HiddenInGame = true;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) bool Flame_Trace_Debug = false;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_TraceIgnoreSelf = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Capsule_HiddenInGame = true;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Flame_Trace_Debug = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Trace_Interval = 0.1f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Radius = 30.f;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) double Length = 200.0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Trace_Interval = 0.1f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Radius = 30.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Length = 200.0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) float Fire_Damage = 1.f;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Fire_Damage = 1.f;
 
-	UPROPERTY(BlueprintReadOnly, Category = FireStream) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
+	UPROPERTY(BlueprintReadOnly) AActor* Owner_A = nullptr; //If this Actor was created by a Child Actor Component returns the Actor that owns that Child Actor Component
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = FireStream) TArray<AActor*> Trace_Ignore_Actors;
 	
 	/////////////////////Components
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) UCapsuleComponent * Flame_Trigger_Capsule;
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * Start_Point;
-	UPROPERTY(BlueprintReadWrite, Category = FireStream) USceneComponent * End_Point;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) UCapsuleComponent * Flame_Trigger_Capsule;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) USceneComponent * Start_Point;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) USceneComponent * End_Point;
 
 
 protected:

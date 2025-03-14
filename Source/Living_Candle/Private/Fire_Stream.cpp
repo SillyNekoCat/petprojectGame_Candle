@@ -90,7 +90,6 @@ void AFire_Stream::BeginPlay()
 	//Check overlap on spawn
 	//Flame_Trigger_Capsule->GetOverlappingActors(Overlapping_Actors);
 	//if (!Dealing_DamageOverTime_TimerHandle.IsValid() && Overlapping_Actors.IsEmpty() != true)
-	Set_Dealing_DamageOverTime_Timer();
 
 
 }
@@ -124,10 +123,23 @@ void AFire_Stream::Capsule_BeginOverlap(UPrimitiveComponent* OverlappedComponent
 }
 //------------------------------------------------------------------------------------------------------------
 //
+void AFire_Stream::Check_EnableOrDisable()
+{
+	if (Flame_Trigger_Capsule->GetOverlapInfos().IsEmpty())
+	{
+		Clear_Dealing_DamageOverTime_Timer();
+	}
+	else
+	{
+		Set_Dealing_DamageOverTime_Timer();
+	}
+
+}
+//------------------------------------------------------------------------------------------------------------
+//
 void AFire_Stream::Set_Dealing_DamageOverTime_Timer()
 {
 	GetWorldTimerManager().SetTimer(Dealing_DamageOverTime_TimerHandle, Dealing_DamageOverTime_Delegate, Trace_Interval, true, -1.0f);
-
 }
 //------------------------------------------------------------------------------------------------------------
 // timer function, trace
@@ -183,18 +195,14 @@ void AFire_Stream::Dealing_DamageOverTime()
 	//if (IsValid(Owner_A))
 		//Overlapping_Actors.Remove(Owner_A); //dissapears on player after first trace
 
-	//if (Overlapping_Actors.IsEmpty())
-	if (damage_actors.IsEmpty())
-	{
-		Clear_Dealing_DamageOverTime_Timer();
-	}
-
+	Check_EnableOrDisable();
 }
 //------------------------------------------------------------------------------------------------------------
 //
 void AFire_Stream::Clear_Dealing_DamageOverTime_Timer()
 {
 	GetWorldTimerManager().ClearTimer(Dealing_DamageOverTime_TimerHandle);
+	Dealing_DamageOverTime_TimerHandle.Invalidate();
 }
 //------------------------------------------------------------------------------------------------------------
 //Calculate similar shapes for capsule and trace path
