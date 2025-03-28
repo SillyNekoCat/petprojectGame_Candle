@@ -145,34 +145,6 @@ void AMelee_Weapon::Update_CustomEffectSpecs_Implementation()
 //	Owner_AttackAttributeSet = nullptr;
 //}
 //------------------------------------------------------------------------------------------------------------
-//
-void AMelee_Weapon::Enable_Attack_Trace()
-{
-	//GetWorldTimerManager().SetTimer(Trace_TimerHandle, Trace_Delegate, Attack_Trace_Interval, true, -1.0f);
-
-	//if(is_alt_attack == false)
-	//{
-	//	GetWorldTimerManager().SetTimer(AttackDuration_TimerHandle, AttackDuration_Delegate, Attack_Trace_Duration, false, -1.0f);
-	//}
-	//else
-	//{
-	//	GetWorldTimerManager().SetTimer(AttackDuration_TimerHandle, AttackDuration_Delegate, AltAttack_Trace_Duration, false, -1.0f);
-	//}
-
-
-
-
-}
-//------------------------------------------------------------------------------------------------------------
-//
-void AMelee_Weapon::Disable_Attack_Trace()
-{
-	//GetWorldTimerManager().ClearTimer(Trace_TimerHandle);
-
-	Last_Touched_Actor = nullptr;
-
-}
-//------------------------------------------------------------------------------------------------------------
 //validate result of trace
 void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 {

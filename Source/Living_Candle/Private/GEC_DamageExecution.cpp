@@ -3,7 +3,6 @@
 
 #include "GEC_DamageExecution.h"
 #include "AbilitySystemComponent.h"
-//#include "PlayerCandle_AttributeSet.h"
 #include "Base_AttributeSet.h"
 
 struct FDamageStatics
@@ -112,10 +111,7 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//Final execution output.
 	//UBase_AttributeSet::GetIncoming_Phys_DamageAttribute()
 
-	//OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UBase_AttributeSet::GetIncoming_Phys_DamageAttribute(), EGameplayModOp::Additive, -phys_damage_done));
-	//OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UBase_AttributeSet::GetIncoming_Fire_DamageAttribute(), EGameplayModOp::Additive, -fire_damage_done));
-	//OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(UBase_AttributeSet::GetIncoming_Pure_DamageAttribute(), EGameplayModOp::Additive, -base_pure_damage));
-	
+	//OutExecutionOutput.MarkConditionalGameplayEffectsToTrigger();
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Phys_DamageProperty, EGameplayModOp::Additive, phys_damage_done));
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Fire_DamageProperty, EGameplayModOp::Additive, fire_damage_done));
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Pure_DamageProperty, EGameplayModOp::Additive, base_pure_damage));

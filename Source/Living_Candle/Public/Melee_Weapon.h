@@ -44,8 +44,6 @@ public:
 	//CPP Overridable (BlueprintNativeEvent), Need to keep effect specs valid
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable) void Update_CustomEffectSpecs();
 
-	UFUNCTION(BlueprintCallable) virtual void Enable_Attack_Trace();
-	UFUNCTION(BlueprintCallable) virtual void Disable_Attack_Trace();
 
 	//validate result of trace
 	UFUNCTION(BlueprintCallable) virtual void Check_Hit(TArray <FHitResult> hits_results);

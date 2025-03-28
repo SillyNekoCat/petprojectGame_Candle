@@ -23,12 +23,13 @@ public:
 	UFUNCTION(BlueprintCallable) void OnMaxCombo_Reset_Index();
 	UFUNCTION(BlueprintCallable) void Attach_Weapon(AMelee_Weapon* melee_weapon);
 	UFUNCTION(BlueprintCallable) void Detach_CurrentWeapon();
-
+	UPROPERTY(BlueprintReadWrite) bool isActive_Block = false;
 	UPROPERTY(BlueprintReadWrite) bool Can_Attack = true;
-
 	UPROPERTY(BlueprintReadWrite) bool Can_AttackAndMove = false;
-	
 	UPROPERTY(BlueprintReadWrite) bool Is_Attacking = false;
+
+	UPROPERTY(BlueprintReadWrite) int Active_Block_Value = 1;
+	UPROPERTY(BlueprintReadWrite) int MaxActive_Block_Value = 1;
 
 	UPROPERTY(BlueprintReadWrite) int Attack_Index = 0;
 

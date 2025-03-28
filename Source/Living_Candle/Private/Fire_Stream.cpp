@@ -195,7 +195,9 @@ void AFire_Stream::Dealing_DamageOverTime()
 	//if (IsValid(Owner_A))
 		//Overlapping_Actors.Remove(Owner_A); //dissapears on player after first trace
 
-	Check_EnableOrDisable();
+	if(damage_actors.IsEmpty())
+		Clear_Dealing_DamageOverTime_Timer();
+
 }
 //------------------------------------------------------------------------------------------------------------
 //

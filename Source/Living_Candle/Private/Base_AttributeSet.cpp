@@ -3,7 +3,9 @@
 
 #include "Base_AttributeSet.h"
 #include "GameplayEffectExtension.h"
-//#include "AbilitySystemBlueprintLibrary.h"//
+#include "Attack_Comp.h"
+//#include "Kismet/KismetMathLibrary.h"
+
 //------------------------------------------------------------------------------------------------------------
 //
 UBase_AttributeSet::UBase_AttributeSet()
@@ -36,6 +38,7 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	
 	FGameplayTag tag;
 
+	//Heal
 	if (Data.EvaluatedData.Attribute == GetIncoming_HealAttribute())
 	{
 		tag = FGameplayTag::RequestGameplayTag(FName("Health.Heal"));
@@ -51,6 +54,8 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))
 	//FGameplayTag::RequestGameplayTag(FName("DamageTypes.Pure"))
 	
+	
+
 	//Incoming_Phys_Damage
 	if (Data.EvaluatedData.Attribute == GetIncoming_Phys_DamageAttribute())
 	{
@@ -127,5 +132,25 @@ void UBase_AttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
+}
+//------------------------------------------------------------------------------------------------------------
+//
+void UBase_AttributeSet::ActiveBlock(AActor* causer)
+{
+	AActor* owning_actor = GetOwningActor();
+	UAttack_Comp* attack_comp = owning_actor->GetComponentByClass<UAttack_Comp>();
+	if (attack_comp->isActive_Block)
+	{
+		FVector start_loc = owning_actor->GetActorLocation();
+		FVector target_loc = causer->GetActorLocation();
+		//UKismetMathLibrary::FindLookAtRotation();
+
+		FRotator find_look_at_rot = FRotationMatrix::MakeFromX(target_loc - start_loc).Rotator();
+		if ( find_look_at_rot.Equals(Cast<APawn>(owning_actor)->GetBaseAimRotation(), 45.0) )
+		{//Active block
+
+		}
+
+	}
 }
 //------------------------------------------------------------------------------------------------------------
