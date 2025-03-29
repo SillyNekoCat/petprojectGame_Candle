@@ -35,8 +35,6 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue);
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue);
 	
-	void ActiveBlock(AActor* causer);
-	
 	float MaxHealthBeforeAttributeChange;
 	float HealthBeforeAttributeChange;
 

@@ -93,58 +93,6 @@ void AMelee_Weapon::Update_CustomEffectSpecs_Implementation()
 
 }
 //------------------------------------------------------------------------------------------------------------
-//
-//void AMelee_Weapon::Attach(USkeletalMeshComponent *arms_mesh, AActor* weapon_owner, UAttack_Comp* attack_comp)
-//{
-//
-//
-//	USceneComponent *root_component = GetRootComponent();
-//
-//	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
-//	{//Collision setup for attached weapon
-//		prim_component->SetSimulatePhysics(false);
-//		//prim_component->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-//		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-//		Weapon_PickupSphere->SetGenerateOverlapEvents(false);
-//	}
-//
-//	// Attach to character
-//	FAttachmentTransformRules attachment_rules(EAttachmentRule::SnapToTarget, true);
-//	AttachToComponent(arms_mesh, attachment_rules, FName(TEXT("Weapon_Socket")));
-//
-//	Owner_Of_Weapon = weapon_owner;
-//	//Owner_ASC = Owner_Of_Weapon->GetComponentByClass<UAbilitySystemComponent>();
-//	Owner_ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Owner_Of_Weapon);
-//	Owner_AttackAttributeSet = Cast<UAttack_AttributeSet>(Owner_ASC->GetAttributeSet(UAttack_AttributeSet::StaticClass()));
-//
-//	Weapon_Ignored_Actors.AddUnique(Owner_Of_Weapon);
-//
-//	attack_comp->Current_Weapon = this;
-//}
-//------------------------------------------------------------------------------------------------------------
-//
-//void AMelee_Weapon::Detach(UAttack_Comp* attack_comp)
-//{
-//	USceneComponent *root_component = GetRootComponent();
-//
-//	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-//
-//	if (UPrimitiveComponent* prim_component = Cast<UPrimitiveComponent>(root_component))
-//	{//Collision setup for detached weapon
-//		prim_component->SetSimulatePhysics(true);
-//		
-//
-//		prim_component->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-//		Weapon_PickupSphere->SetGenerateOverlapEvents(true);
-//	}
-//
-//	attack_comp->Current_Weapon = nullptr;
-//	Weapon_Ignored_Actors.Remove(Owner_Of_Weapon);
-//	Owner_Of_Weapon = nullptr;
-//	Owner_ASC = nullptr;
-//	Owner_AttackAttributeSet = nullptr;
-//}
-//------------------------------------------------------------------------------------------------------------
 //validate result of trace
 void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 {
@@ -166,56 +114,56 @@ void AMelee_Weapon::Check_Hit(TArray <FHitResult> hits_results)
 	////Apply damage
 	for (int i = 0; i < Damage_Actors.Num() ; i++) 
 	{
-		if (Damage_Actors[i] != nullptr && !Last_Touched_Actors.Contains(Damage_Actors[i]) )//ќдин удар за атаку
+		if (Damage_Actors[i] != nullptr && !Last_Touched_Actors.Contains(Damage_Actors[i]) )//ќдин удар за весь монтаж
 		{
+			Apply_Weapon_Hit_Effects(Damage_Actors[i]);
+			//if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
+			//{
+			//	//ASCs_ApplyDamage.Add(asc_damage_actor);
 
-			if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Damage_Actors[i]) )//Damage_Actors[i]->GetComponentByClass<UAbilitySystemComponent>()
-			{
-				//ASCs_ApplyDamage.Add(asc_damage_actor);
 
+			//	////1. Damage
+			//	//1.1 calculate damage
+			//	float modified_phys_damage = Weapon_AttributeSet->GetPhys_Damage();
+			//	if(IsValid(Owner_AttackAttributeSet))
+			//		modified_phys_damage = (Weapon_AttributeSet->GetPhys_Damage() + Owner_AttackAttributeSet->GetMelee_Damage() + Owner_AttackAttributeSet->GetAdded_Physical_Damage() ) * Owner_AttackAttributeSet->GetPhysical_Damage_Multiplier();
 
-				////1. Damage
-				//1.1 calculate damage
-				float modified_phys_damage = Weapon_AttributeSet->GetPhys_Damage();
-				if(IsValid(Owner_AttackAttributeSet))
-					modified_phys_damage = (Weapon_AttributeSet->GetPhys_Damage() + Owner_AttackAttributeSet->GetMelee_Damage() + Owner_AttackAttributeSet->GetAdded_Physical_Damage() ) * Owner_AttackAttributeSet->GetPhysical_Damage_Multiplier();
+			//	float heatcomp_fire_damage = 0.f;
+			//	if(IsValid(Heat_Component))
+			//	{
+			//		if (Heat_Component->Can_Heat)
+			//			heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
+			//	}
 
-				float heatcomp_fire_damage = 0.f;
-				if(IsValid(Heat_Component))
-				{
-					if (Heat_Component->Can_Heat)
-						heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(Damage_Actors[i]);
-				}
+			//	//1.2 Make Effect Spec for Damage
+			//	FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+			//	GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), modified_phys_damage);
+			//	GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Phys_Penetrate")), Weapon_AttributeSet->GetPhys_Penetrate());
+			//	GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
+			//	GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Fire_Penetrate")), Weapon_AttributeSet->GetFire_Penetrate());
+			//	
+			//	//1.3 Apply Damage Effect
+			//	Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
 
-				//1.2 Make Effect Spec for Damage
-				FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), modified_phys_damage);
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Phys_Penetrate")), Weapon_AttributeSet->GetPhys_Penetrate());
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
-				GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Fire_Penetrate")), Weapon_AttributeSet->GetFire_Penetrate());
-				
-				//1.3 Apply Damage Effect
-				Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
+			//	////2. Knockback
+			//	float knockback_value = Owner_AttackAttributeSet->GetKnockback();
+			//	if(knockback_value > 0.f)
+			//	{
+			//		//2.1 Make Effect Spec for Knockback
+			//		FGameplayEffectSpec GE_Spec_Knockback = *Owner_ASC->MakeOutgoingSpec(GE_Knockback_ToApply, 0.f, Owner_ASC->MakeEffectContext()).Data.Get();
+			//		GE_Spec_Knockback.SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Ability.Knockback.ImpulseMagnitude")), knockback_value);
 
-				////2. Knockback
-				float knockback_value = Owner_AttackAttributeSet->GetKnockback();
-				if(knockback_value > 0.f)
-				{
-					//2.1 Make Effect Spec for Knockback
-					FGameplayEffectSpec GE_Spec_Knockback = *Owner_ASC->MakeOutgoingSpec(GE_Knockback_ToApply, 0.f, Owner_ASC->MakeEffectContext()).Data.Get();
-					GE_Spec_Knockback.SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Ability.Knockback.ImpulseMagnitude")), knockback_value);
+			//		//2.2 Apply Knockback Effect
+			//		Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Knockback, asc_damage_actor);
+			//	}
 
-					//2.2 Apply Knockback Effect
-					Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Knockback, asc_damage_actor);
-				}
+			//	////3. Custom effect
+			//	for(int e = 0; e < Custom_EffectSpecs.Num(); e++)
+			//	{
+			//		Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Custom_EffectSpecs[e], asc_damage_actor);
+			//	}
 
-				////3. Custom effect
-				for(int e = 0; e < Custom_EffectSpecs.Num(); e++)
-				{
-					Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Custom_EffectSpecs[e], asc_damage_actor);
-				}
-
-			}
+			//}
 
 		}
 
@@ -251,8 +199,67 @@ void AMelee_Weapon::Attack_Trace()
 
 }
 //------------------------------------------------------------------------------------------------------------
+//Applies all of the gameplay effects which are used by this weapon to hit (include damage)
+void AMelee_Weapon::Apply_Weapon_Hit_Effects(AActor* target)
+{
+	if(UAttack_Comp* attack_comp = target->GetComponentByClass<UAttack_Comp>() )
+	{
+		if(!attack_comp->ActiveBlock_ReceiveHit(Owner_Of_Weapon, 1) )
+			return;
+	}
+
+
+	if (UAbilitySystemComponent* asc_damage_actor = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(target) )//
+	{
+		//ASCs_ApplyDamage.Add(asc_damage_actor);
+
+
+		////1. Damage
+		//1.1 calculate damage
+		float modified_phys_damage = Weapon_AttributeSet->GetPhys_Damage();
+		if(IsValid(Owner_AttackAttributeSet))
+			modified_phys_damage = (Weapon_AttributeSet->GetPhys_Damage() + Owner_AttackAttributeSet->GetMelee_Damage() + Owner_AttackAttributeSet->GetAdded_Physical_Damage() ) * Owner_AttackAttributeSet->GetPhysical_Damage_Multiplier();
+
+		float heatcomp_fire_damage = 0.f;
+		if(IsValid(Heat_Component))
+		{
+			if (Heat_Component->Can_Heat)
+				heatcomp_fire_damage = Heat_Component->Calculate_HeatContactDamage(target);
+		}
+
+		//1.2 Make Effect Spec for Damage
+		FGameplayEffectSpec GE_Spec_Damage = *Owner_ASC->MakeOutgoingSpec(GE_Damage_ToApply, 0, Owner_ASC->MakeEffectContext()).Data.Get();
+		GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Phys")), modified_phys_damage);
+		GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Phys_Penetrate")), Weapon_AttributeSet->GetPhys_Penetrate());
+		GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire")), Weapon_AttributeSet->GetFire_Damage() + heatcomp_fire_damage);
+		GE_Spec_Damage.SetSetByCallerMagnitude( FGameplayTag::RequestGameplayTag(FName("Damage_Resistance.Fire_Penetrate")), Weapon_AttributeSet->GetFire_Penetrate());
+
+		//1.3 Apply Damage Effect
+		Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Damage, asc_damage_actor);
+
+		////2. Knockback
+		float knockback_value = Owner_AttackAttributeSet->GetKnockback();
+		if(knockback_value > 0.f)
+		{
+			//2.1 Make Effect Spec for Knockback
+			FGameplayEffectSpec GE_Spec_Knockback = *Owner_ASC->MakeOutgoingSpec(GE_Knockback_ToApply, 0.f, Owner_ASC->MakeEffectContext()).Data.Get();
+			GE_Spec_Knockback.SetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Ability.Knockback.ImpulseMagnitude")), knockback_value);
+
+			//2.2 Apply Knockback Effect
+			Owner_ASC->ApplyGameplayEffectSpecToTarget(GE_Spec_Knockback, asc_damage_actor);
+		}
+
+		////3. Custom effect
+		for(int e = 0; e < Custom_EffectSpecs.Num(); e++)
+		{
+			Owner_ASC->BP_ApplyGameplayEffectSpecToTarget(Custom_EffectSpecs[e], asc_damage_actor);
+		}
+
+	}
+}
+//------------------------------------------------------------------------------------------------------------
 //
-UAbilitySystemComponent* AMelee_Weapon::GetAbilitySystemComponent() const 
+UAbilitySystemComponent* AMelee_Weapon::GetAbilitySystemComponent() const
 {
 	return Weapon_AbilitySystemComp;
 }

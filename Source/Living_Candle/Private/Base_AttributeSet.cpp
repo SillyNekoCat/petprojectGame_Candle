@@ -134,23 +134,3 @@ void UBase_AttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute
 
 }
 //------------------------------------------------------------------------------------------------------------
-//
-void UBase_AttributeSet::ActiveBlock(AActor* causer)
-{
-	AActor* owning_actor = GetOwningActor();
-	UAttack_Comp* attack_comp = owning_actor->GetComponentByClass<UAttack_Comp>();
-	if (attack_comp->isActive_Block)
-	{
-		FVector start_loc = owning_actor->GetActorLocation();
-		FVector target_loc = causer->GetActorLocation();
-		//UKismetMathLibrary::FindLookAtRotation();
-
-		FRotator find_look_at_rot = FRotationMatrix::MakeFromX(target_loc - start_loc).Rotator();
-		if ( find_look_at_rot.Equals(Cast<APawn>(owning_actor)->GetBaseAimRotation(), 45.0) )
-		{//Active block
-
-		}
-
-	}
-}
-//------------------------------------------------------------------------------------------------------------

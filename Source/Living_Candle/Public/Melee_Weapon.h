@@ -50,6 +50,8 @@ public:
 	//This function using for notify state. Call trace function that using weapon sockets to calculate end/start trace location, validate result, using him as parameter for delegate call On_SendTargets.(delegate is already called inside this or Check_Hit function)
 	UFUNCTION(BlueprintCallable) virtual void Attack_Trace(); 
 
+	UFUNCTION(BlueprintCallable) virtual void Apply_Weapon_Hit_Effects(AActor* target);
+
 	
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 

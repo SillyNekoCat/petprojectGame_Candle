@@ -25,7 +25,7 @@ void ASword::BeginPlay()
 	//AMelee_Weapon::DispatchBeginPlay();
 	//AMelee_Weapon::BeginPlay();
 
-	//ƒелегат уведомл€ющий об получении урона минимум дл€ Heat_Component
+
 	//Base_AttributeSet->On_Damage_Take.AddDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
 
 }

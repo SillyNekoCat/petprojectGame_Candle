@@ -20,6 +20,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable) void Set_ActiveBlockRecoveryTimer();
+	UFUNCTION(BlueprintCallable) void Clear_ActiveBlockRecoveryTimer();
+	UFUNCTION() void ActiveBlockRecovery_TimerF();
+
+	UFUNCTION(BlueprintCallable) bool ActiveBlock_ReceiveHit(AActor* causer, int break_block_value);
+	UFUNCTION(BlueprintCallable) bool Is_LookAt_Block(AActor* causer, AActor* blocking_actor);
+
+
 	UFUNCTION(BlueprintCallable) void OnMaxCombo_Reset_Index();
 	UFUNCTION(BlueprintCallable) void Attach_Weapon(AMelee_Weapon* melee_weapon);
 	UFUNCTION(BlueprintCallable) void Detach_CurrentWeapon();
@@ -32,6 +40,10 @@ public:
 	UPROPERTY(BlueprintReadWrite) int MaxActive_Block_Value = 1;
 
 	UPROPERTY(BlueprintReadWrite) int Attack_Index = 0;
+	
+	UPROPERTY(BlueprintReadWrite) float ActiveBlockRecovery_TimerValue = 2;
+	FTimerHandle ActiveBlockRecovery_TimerHandle;
+	FTimerDelegate ActiveBlockRecovery_Delegate;
 
 	UPROPERTY(BlueprintReadWrite) AMelee_Weapon* Current_Weapon;
 
