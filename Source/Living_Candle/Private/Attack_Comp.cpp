@@ -13,14 +13,17 @@ UAttack_Comp::UAttack_Comp()
 
 	//Bind timer function
 	ActiveBlockRecovery_Delegate.BindUFunction(this, TEXT("ActiveBlockRecovery_TimerF"));
+
+
 }
 //------------------------------------------------------------------------------------------------------------
 // Called when the game starts
 void UAttack_Comp::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	Set_ActiveBlockRecoveryTimer();
 
-	// ...
 	
 }
 //------------------------------------------------------------------------------------------------------------
@@ -50,32 +53,47 @@ void UAttack_Comp::ActiveBlockRecovery_TimerF()
 {
 	if (Active_Block_Value >= MaxActive_Block_Value)
 	{
-		Active_Block_Value = MaxActive_Block_Value;
+		Set_ActiveBlockValue(MaxActive_Block_Value);
 		Clear_ActiveBlockRecoveryTimer();
 	}
 	else
 	{
-		Active_Block_Value++;
+		Set_ActiveBlockValue(FMath::Min(Active_Block_Value + 1.0, MaxActive_Block_Value) );
 	}
 
 }
 //------------------------------------------------------------------------------------------------------------
+// Setter
+void UAttack_Comp::Set_ActiveBlockValue(float new_value)
+{
+	Active_Block_Value = new_value;
+	On_ActiveBlockValue_Changed.Broadcast();
+}
+//------------------------------------------------------------------------------------------------------------
+// Setter
+void UAttack_Comp::Set_MaxActiveBlockValue(float new_value)
+{
+	MaxActive_Block_Value = new_value;
+	Set_ActiveBlockRecoveryTimer();
+	On_ActiveBlockValue_Changed.Broadcast();
+}
+//------------------------------------------------------------------------------------------------------------
 // return true if the block is completely broken or if causer is outside of the block area
-bool UAttack_Comp::ActiveBlock_ReceiveHit(AActor* causer, int break_block_value)
+bool UAttack_Comp::ActiveBlock_ReceiveHit(AActor* causer, float break_block_value)
 {
 	if (isActive_Block && Active_Block_Value > 0)
 	{
 		AActor* causer_0 = causer;
 		if (Is_LookAt_Block(causer_0, GetOwner()))
 		{
-			Active_Block_Value = Active_Block_Value - break_block_value;
-			Set_ActiveBlockRecoveryTimer();
+			Set_ActiveBlockValue(FMath::Max(Active_Block_Value - break_block_value, 0) );
 
+			Set_ActiveBlockRecoveryTimer();
+			
 			if (Active_Block_Value >= 0)
 			{//block is not completely broken
 				return false;
 			}
-			Active_Block_Value = 0;
 
 		}
 

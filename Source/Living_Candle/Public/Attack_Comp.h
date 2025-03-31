@@ -7,6 +7,7 @@
 #include "Melee_Weapon.h"
 #include "Attack_Comp.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActiveBlockValue_Delegate);
 //------------------------------------------------------------------------------------------------------------
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
 class LIVING_CANDLE_API UAttack_Comp : public UActorComponent
@@ -24,7 +25,9 @@ public:
 	UFUNCTION(BlueprintCallable) void Clear_ActiveBlockRecoveryTimer();
 	UFUNCTION() void ActiveBlockRecovery_TimerF();
 
-	UFUNCTION(BlueprintCallable) bool ActiveBlock_ReceiveHit(AActor* causer, int break_block_value);
+	UFUNCTION(BlueprintCallable) void Set_ActiveBlockValue(float new_value);
+	UFUNCTION(BlueprintCallable) void Set_MaxActiveBlockValue(float new_value);
+	UFUNCTION(BlueprintCallable) bool ActiveBlock_ReceiveHit(AActor* causer, float break_block_value);
 	UFUNCTION(BlueprintCallable) bool Is_LookAt_Block(AActor* causer, AActor* blocking_actor);
 
 
@@ -35,15 +38,19 @@ public:
 	UPROPERTY(BlueprintReadWrite) bool Can_Attack = true;
 	UPROPERTY(BlueprintReadWrite) bool Can_AttackAndMove = false;
 	UPROPERTY(BlueprintReadWrite) bool Is_Attacking = false;
-
-	UPROPERTY(BlueprintReadWrite) int Active_Block_Value = 1;
-	UPROPERTY(BlueprintReadWrite) int MaxActive_Block_Value = 1;
+	
+	//Modify directly only as a base/start value, otherwise use a setter
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) float Active_Block_Value = 1;
+	//Modify directly only as a base/start value, otherwise use a setter
+	UPROPERTY(BlueprintReadOnly, EditAnywhere) float MaxActive_Block_Value = 1;
 
 	UPROPERTY(BlueprintReadWrite) int Attack_Index = 0;
 	
 	UPROPERTY(BlueprintReadWrite) float ActiveBlockRecovery_TimerValue = 2;
 	FTimerHandle ActiveBlockRecovery_TimerHandle;
 	FTimerDelegate ActiveBlockRecovery_Delegate;
+
+	UPROPERTY(BlueprintAssignable) FActiveBlockValue_Delegate On_ActiveBlockValue_Changed;
 
 	UPROPERTY(BlueprintReadWrite) AMelee_Weapon* Current_Weapon;
 
@@ -55,9 +62,5 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-
-
-
-		
 };
 //------------------------------------------------------------------------------------------------------------
