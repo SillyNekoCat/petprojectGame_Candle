@@ -31,15 +31,6 @@ struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 //------------------------------------------------------------------------------------------------------------
-UENUM(BlueprintType)   
-enum class Enum_Death_Case : uint8
-{
-	EDeath_None		UMETA(DisplayName="EDeath_None"),//death case is undefined
-	EDeath_Extinguished		UMETA(DisplayName="EDeath_Extinguished"),//from water drops, lack of oxygen, drown in water pool. the body will stay 
-	EDeath_WaxLoss		UMETA(DisplayName="EDeath_WaxLoss"),//death from health(wax) loss. the body won't stay
-	//EDeath_Drowned     UMETA(DisplayName="EDeath_Drown"),//EDeath_Extinguished is the same?
-};
-//------------------------------------------------------------------------------------------------------------
 //Player Character
 UCLASS(config=Game)
 class ALiving_CandleCharacter : public ACharacter, public IAbilitySystemInterface
@@ -55,26 +46,14 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 
-	//Event if something touched head wick
+	//
 	UFUNCTION() void Head_Wick_Collision_BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-	
-
-	//UFUNCTION(BlueprintCallable) void Pickup_Item(APickupAble_Item* item);
-
-	//What will happen before destroy
-	UFUNCTION(BlueprintCallable) void Death(Enum_Death_Case e_death_case = Enum_Death_Case::EDeath_None);
 
 	////////////~ Begin IAbilitySystemInterface
 	// Returns our Ability System Component. 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	////////////~ End IAbilitySystemInterface
 
-
-
-
-
-
-	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = Attack) AMelee_Weapon* Current_Weapon; //legacy
 	UPROPERTY(BlueprintReadWrite) TArray<AActor*> Interactable_Actors;
 
 	UPROPERTY(BlueprintReadWrite) UPlayerHUD* PlayerHUD;
@@ -86,7 +65,6 @@ public:
 	
 
 	//////////////////////COMPONENTS
-
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite) UAttack_Comp* Attack_Comp;
 
@@ -129,10 +107,6 @@ protected:
 	void On_Action_Attack(const FInputActionValue &value);
 
 	void On_Action_AltAttack(const FInputActionValue &value);
-
-	
-
-
 
 };
 //------------------------------------------------------------------------------------------------------------

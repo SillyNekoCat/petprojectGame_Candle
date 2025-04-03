@@ -8,7 +8,6 @@
 #include "Components/WidgetComponent.h"
 #include "Water_Actor.h"
 #include "Melee_Weapon.h"
-#include "PickupAble_Item.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -165,37 +164,7 @@ void ALiving_CandleCharacter::Head_Wick_Collision_BeginOverlap(UPrimitiveCompone
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 
-	if (Cast<AWater_Actor>(OtherActor)) 
-	{
-		Death(Enum_Death_Case::EDeath_Extinguished);
-
-		
-	}
-
 }
-
-//------------------------------------------------------------------------------------------------------------
-//
-//void ALiving_CandleCharacter::Melee_Attack_TraceEnable()
-//{
-//	if(Attack_Comp->Current_Weapon != nullptr)
-//		Attack_Comp->Current_Weapon->Enable_Attack_Trace();
-//
-//}
-//------------------------------------------------------------------------------------------------------------
-//
-//void ALiving_CandleCharacter::Melee_Attack_TraceDisable()
-//{
-//	if(Attack_Comp->Current_Weapon != nullptr)
-//		Attack_Comp->Current_Weapon->Disable_Attack_Trace();
-//}
-//------------------------------------------------------------------------------------------------------------
-//Call tracing funcion once from weapon if it exist
-//void ALiving_CandleCharacter::Weapon_Trace()
-//{
-//	if(Attack_Comp->Current_Weapon != nullptr)
-//		Attack_Comp->Current_Weapon->Attack_Trace();
-//}
 //------------------------------------------------------------------------------------------------------------
 void ALiving_CandleCharacter::Move(const FInputActionValue& Value)
 {
@@ -295,64 +264,6 @@ void ALiving_CandleCharacter::On_Action_AltAttack(const FInputActionValue &value
 {
 
 
-}
-//------------------------------------------------------------------------------------------------------------
-//
-//void ALiving_CandleCharacter::Pickup_Item(APickupAble_Item* item)
-//{
-//	if (item == nullptr) 
-//	{
-//
-//		return;
-//	}
-//
-//
-//	//item->Pickup();
-//	//Wick_Items++;
-//
-//	FPickupableItem_Data item_data;
-//
-//	item->Pickup(item_data);
-//
-//	switch(item_data.Item_Type)
-//	{
-//	case Enum_Pickupable_Item::EItem_Wick: 
-//	
-//		Wax_System->Update_Wick_Items(item_data.Amount);
-//		break;
-//	case Enum_Pickupable_Item::EItem_Wax: 
-//
-//		Wax_System->Heal_Or_UpdateWaxItems(item_data.Amount);
-//		break;
-//	default: 
-//		if(GEngine)
-//			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("pickup type is undefined."));
-//		break;
-//	}
-//
-//}
-//------------------------------------------------------------------------------------------------------------
-//What will happen before destroying
-void ALiving_CandleCharacter::Death(Enum_Death_Case e_death_case)
-{
-	switch(e_death_case)
-	{
-	case Enum_Death_Case::EDeath_Extinguished: //death on full health(wax): from water drops, lack of oxygen,. the body will stay 
-		Destroy();
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Extinguished. the body will stay"));//debug
-		break;
-	case Enum_Death_Case::EDeath_WaxLoss: //death from health(wax) loss. the body won't stay
-		Destroy();
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Wax Loss. the body won't stay"));//debug 
-		break;
-	default: 
-		Destroy();
-		if(GEngine)
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::White, TEXT("Death case is undefined."));//debug
-		break;
-	}
 }
 //------------------------------------------------------------------------------------------------------------
 // Returns our Ability System Component.
