@@ -112,6 +112,8 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//UBase_AttributeSet::GetIncoming_Phys_DamageAttribute()
 
 	//OutExecutionOutput.MarkConditionalGameplayEffectsToTrigger();
+
+	//Получается всегда будет 3 вызова
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Phys_DamageProperty, EGameplayModOp::Additive, phys_damage_done));
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Fire_DamageProperty, EGameplayModOp::Additive, fire_damage_done));
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().Incoming_Pure_DamageProperty, EGameplayModOp::Additive, base_pure_damage));

@@ -185,6 +185,8 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 //Call when owner take fire damage
 void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FGameplayTag DamageTag, float Damage, float OldValue, float NewValue)
 {
+	if(!Can_Heat)
+		return;
 
 	//double fire_damage_taken = damage_info.Fire_Damage;
 	if( !DamageTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))) )

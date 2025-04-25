@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
-//#include "GenericStructs.h"
+#include "DamageInfo.h"
 #include "Base_AttributeSet.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -15,7 +15,8 @@
 	GAMEPLAYATTRIBUTE_VALUE_INITTER(PropertyName)
 
 //DECLARE_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor* /*EffectInstigator*/, AActor* /*EffectCauser*/, const FGameplayEffectSpec* /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor*, EffectInstigator, AActor*, EffectCauser, FGameplayTag, DamageTag, float, Magnitude, float, OldValue, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_SixParams(FBaseAttributeSet_Delegate, AActor*, EffectInstigator, AActor*, EffectCauser, FGameplayTag, Tag, float, Magnitude, float, OldValue, float, NewValue);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FRecieveDamage_Delegate, AActor*, EffectInstigator, AActor*, EffectCauser, FDamage_Info, Damage_Info);
 
 
 /**
@@ -35,10 +36,13 @@ public:
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue);
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue);
 	
+	int DamageType_Counter = 0;
 	float MaxHealthBeforeAttributeChange;
 	float HealthBeforeAttributeChange;
 
-	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Damage_Take;//Attribute event
+	FDamage_Info CurrentDamage_Info;
+
+	UPROPERTY(BlueprintAssignable) FRecieveDamage_Delegate On_RecieveDamage;//Attribute event
 	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Health_Changed;//Attribute event
 	UPROPERTY(BlueprintAssignable) FBaseAttributeSet_Delegate On_Health_Zero;//Attribute event
 

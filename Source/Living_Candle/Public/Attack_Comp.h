@@ -31,7 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable) bool Is_LookAt_Block(AActor* causer, AActor* blocking_actor);
 
 
-	UFUNCTION(BlueprintCallable) void OnMaxCombo_Reset_Index();
+	UFUNCTION(BlueprintCallable) void OnMaxLightCombo_Reset_Index();
+	UFUNCTION(BlueprintCallable) void OnMaxHeavyCombo_Reset_Index();
 	UFUNCTION(BlueprintCallable) void Attach_Weapon(AMelee_Weapon* melee_weapon);
 	UFUNCTION(BlueprintCallable) void Detach_CurrentWeapon();
 	UPROPERTY(BlueprintReadWrite) bool isActive_Block = false;
@@ -54,7 +55,8 @@ public:
 
 	UPROPERTY(BlueprintReadWrite) AMelee_Weapon* Current_Weapon;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)	TArray<UAnimMontage*> SerialAttack_Montages;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)	TArray<UAnimMontage*> LightAttack_Montages;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)	TArray<UAnimMontage*> HeavyAttack_Montages;
 
 	//UPROPERTY(BlueprintReadWrite, EditAnywhere)	TArray<UAnimMontage*> Attack_Montages;
 

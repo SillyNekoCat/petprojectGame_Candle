@@ -119,10 +119,21 @@ bool UAttack_Comp::Is_LookAt_Block(AActor* causer, AActor* blocking_actor)
 }
 //------------------------------------------------------------------------------------------------------------
 // 
-void UAttack_Comp::OnMaxCombo_Reset_Index()
+void UAttack_Comp::OnMaxLightCombo_Reset_Index()
 {
-	if(Attack_Index >= SerialAttack_Montages.Num())
+	if(Attack_Index >= LightAttack_Montages.Num())
 		Attack_Index = 0;
+
+
+}
+//------------------------------------------------------------------------------------------------------------
+// 
+void UAttack_Comp::OnMaxHeavyCombo_Reset_Index()
+{
+	if(Attack_Index >= HeavyAttack_Montages.Num())
+		Attack_Index = 0;
+
+
 }
 //------------------------------------------------------------------------------------------------------------
 //

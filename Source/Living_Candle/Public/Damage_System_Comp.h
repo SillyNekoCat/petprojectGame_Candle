@@ -11,7 +11,7 @@ UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UDamage_System_Comp : public UActorComponent
 {//This component helps with using c++ interface and other tasks... Это компонент для взаимодействия с С++ интерфейсом(он теперь удален)
 	GENERATED_BODY()
-
+	///////////////////////////DELETE------------------------------------
 public:	
 	// Sets default values for this component's properties
 	UDamage_System_Comp();
