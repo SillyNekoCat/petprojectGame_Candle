@@ -8,6 +8,7 @@
 #include "Attack_Comp.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FActiveBlockValue_Delegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FIsAttacking_Change, bool, is_attack);
 //------------------------------------------------------------------------------------------------------------
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent), Blueprintable )
 class LIVING_CANDLE_API UAttack_Comp : public UActorComponent
@@ -35,6 +36,8 @@ public:
 	UFUNCTION(BlueprintCallable) void OnMaxHeavyCombo_Reset_Index();
 	UFUNCTION(BlueprintCallable) void Attach_Weapon(AMelee_Weapon* melee_weapon);
 	UFUNCTION(BlueprintCallable) void Detach_CurrentWeapon();
+	
+	UFUNCTION(BlueprintCallable) void Set_IsAttacking(bool is_attacking);
 	UPROPERTY(BlueprintReadWrite) bool isActive_Block = false;
 	UPROPERTY(BlueprintReadWrite) bool Can_Attack = true;
 	UPROPERTY(BlueprintReadWrite) bool Can_AttackAndMove = false;
@@ -52,6 +55,7 @@ public:
 	FTimerDelegate ActiveBlockRecovery_Delegate;
 
 	UPROPERTY(BlueprintAssignable) FActiveBlockValue_Delegate On_ActiveBlockValue_Changed;
+	UPROPERTY(BlueprintAssignable) FIsAttacking_Change On_IsAttacking_Change;
 
 	UPROPERTY(BlueprintReadWrite) AMelee_Weapon* Current_Weapon;
 

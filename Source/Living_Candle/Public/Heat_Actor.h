@@ -76,20 +76,11 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> GE_HeatContactDamage;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Can_Melting = false; 
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Is_Melting = false;
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Death_OnMaxHeat = false;
-
+	UPROPERTY(BlueprintReadOnly) bool Is_Melting = false;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Required_HeatStatus_ForMelting = 1.f;
-	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Melting_InterpSpeed = 2.f;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float ContactCheck_Interval = 0.1f;
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Melting_Scale_Divider = 2.0;
-
-	UPROPERTY(BlueprintReadWrite) UPrimitiveComponent* Last_OverlapComp;
 
 	//////////////Components
 

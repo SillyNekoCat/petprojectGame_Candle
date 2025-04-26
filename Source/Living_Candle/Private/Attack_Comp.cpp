@@ -203,3 +203,11 @@ void UAttack_Comp::Detach_CurrentWeapon()
 	Current_Weapon->Owner_Of_Weapon = nullptr;
 	Current_Weapon = nullptr;
 }
+//------------------------------------------------------------------------------------------------------------
+//
+void UAttack_Comp::Set_IsAttacking(bool is_attacking)
+{
+	Is_Attacking = is_attacking;
+	On_IsAttacking_Change.Broadcast(is_attacking);
+
+}
