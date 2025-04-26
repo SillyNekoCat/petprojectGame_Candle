@@ -10,7 +10,7 @@
 #include "Heat_Component.generated.h"
 
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChange_Heat, double, heat_status);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) , Blueprintable)
 class LIVING_CANDLE_API UHeat_Component : public UActorComponent
@@ -33,6 +33,8 @@ public:
 	void Heat_Lose(double damage);
 
 	UFUNCTION(BlueprintCallable) void Calculate_MaxHeat();
+	UFUNCTION(BlueprintCallable) void Set_Accumulated_Heat(double value);
+	UFUNCTION(BlueprintCallable) void Set_Heat_Status_Param(double value);
 
 	double Max_Accumulated_Heat;
 	AActor* Damage_Causer;
@@ -43,6 +45,7 @@ public:
 	UMaterialInstanceDynamic *Mat_Heat_Inst = 0;
 	//UPROPERTY(BlueprintReadWrite) TArray<AActor*> Overlapped_Actors;
 
+	UPROPERTY(BlueprintAssignable) FOnChange_Heat OnChangeHeat_Delegate;
 
 	////DEBUG
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) bool Debug = false;
@@ -65,16 +68,16 @@ public:
 	UPROPERTY(BlueprintReadOnly) double Accumulated_Heat = 0.0;
 
 	//Give_PartOfHeat_HaveHeatComp Value is 0 - 1 (1 value will give all heat)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Give_PartOfHeat_HaveHeatComp = 0.5;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0")) double Give_PartOfHeat_HaveHeatComp = 0.5;
 	//Give_PartOfHeat_NotHaveHeatComp Value is 0 - 1 (1 value will give all heat)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Give_PartOfHeat_NotHaveHeatComp = 1.0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0")) double Give_PartOfHeat_NotHaveHeatComp = 1.0;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Heat_Status_Start = 0.0;
-	//the higher value, the slowly it will heat up and higher maximum accumulated heat will have(если делители разные то нагрев будет неправильно делится)
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double HeatResistance_Divider = 5.0;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0")) double Heat_Status_Start = 0.0;
+	//
+	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Heat_Divider = 5.0;
 
 	//the higher value, the faster it will cooling, use a fractional percentage value for example: (0-1) 0.1 = 10%, 1 = 100%
-	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Cooling_Percent_Loss = 0.1;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0")) double Cooling_Percent_Loss = 0.1;
 	//the higher value, the slowly it will cooling
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) double Cooling_Timer_Interval = 0.2;
 	//It will be infinity if value < 0

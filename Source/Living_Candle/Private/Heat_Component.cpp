@@ -45,23 +45,7 @@ void UHeat_Component::BeginPlay()
 		}
 	}
 
-	////Setup starting Heat
-	//Heat_Status_Param = Heat_Status_Start;
-	//validate
-	Heat_Status_Param = UKismetMathLibrary::FClamp(Heat_Status_Start, 0.0, 1.0);
-	//if (Heat_Status_Param > 1.0)
-	//	Heat_Status_Param = 1.0;
-	//if (Heat_Status_Param < 0.0)
-	//	Heat_Status_Param = 0.0;
-	
-
-	//Accumulated_Heat = Accumulated_Heat + Heat_Status_Param * HeatResistance_Divider;
-	//validate 
-	Accumulated_Heat = UKismetMathLibrary::FClamp(Accumulated_Heat + Heat_Status_Param * HeatResistance_Divider, 0.0, Max_Accumulated_Heat);
-	//if (Accumulated_Heat > Max_Accumulated_Heat)
-	//	Accumulated_Heat = Max_Accumulated_Heat;
-	//if (Accumulated_Heat < 0.0)
-	//	Accumulated_Heat = 0.0;
+	Set_Heat_Status_Param(Heat_Status_Start);//////
 
 	if(Mat_Heat_Inst != nullptr)
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
@@ -87,12 +71,7 @@ void UHeat_Component::Cooling_Timer()
 		GetOwner()->GetWorldTimerManager().ClearTimer(CoolingTimer_Handle);
 	}
 
-	Accumulated_Heat = Accumulated_Heat - (Max_Accumulated_Heat * Cooling_Percent_Loss);
-	if (Accumulated_Heat < 0.0)
-		Accumulated_Heat = 0.0;
-	Heat_Status_Param = Heat_Status_Param - Cooling_Percent_Loss;
-	if (Heat_Status_Param < 0.0)
-		Heat_Status_Param = 0.0;
+	Set_Heat_Status_Param(Heat_Status_Param - Cooling_Percent_Loss);////////////
 
 	if(Mat_Heat_Inst != nullptr)
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
@@ -117,15 +96,13 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 
 	Last_FireContactDamage = 0;
 
-	//for (int i = 0; i < Ignore_Actors.Num() ; i++) //ignored actors
-	//{
 		  
 		
 	if (Ignore_Actors.Contains(target->StaticClass()) || Cast<AMelee_Weapon>(target) )
 	{
 		return Last_FireContactDamage;
 	}
-	//}
+	
 
 	if (UHeat_Component* same_comp = Cast<UHeat_Component>(target->GetComponentByClass(UHeat_Component::StaticClass()) ) )
 	{
@@ -133,15 +110,11 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 		{
 			if (same_comp->Heat_Status_Param < Heat_Status_Param)
 			{
-				///////////// попытка сделать всегда "правильное" расределение нагрева
-				//float diffrence_multiplyer = 1.f; 
-				//if(HeatResistance_Divider > same_comp->HeatResistance_Divider)
-				//	diffrence_multiplyer = same_comp->HeatResistance_Divider / HeatResistance_Divider;
-				/////////////
+
 
 				Last_FireContactDamage = (Accumulated_Heat - same_comp->Accumulated_Heat) * Give_PartOfHeat_HaveHeatComp;
 				
-				//GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("Last_FireContactDamage = %f"), Last_FireContactDamage));//debug temp
+				//GEngine->AddOnScreenDebugMessage(-1, 30.f, FColor::Red, FString::Printf(TEXT("Last_FireContactDamage = %f"), Last_FireContactDamage));//temp
 				
 				Heat_Lose(Last_FireContactDamage);
 				//return Last_FireContactDamage;
@@ -177,7 +150,7 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, FString::Printf(TEXT("UHeat_Component::Calculate_HeatContactDamage Last_FireContactDamage = %f"), Last_FireContactDamage));//debug temp
 	
 	
-	//Heat_Lose(Last_FireContactDamage);
+	
 	return Last_FireContactDamage;
 
 }
@@ -201,19 +174,8 @@ void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCa
 
 	GetOwner()->GetWorldTimerManager().ClearTimer(CoolingTimer_Handle);
 
-	Accumulated_Heat = Accumulated_Heat + Damage;
-	//validate 
-	if (Accumulated_Heat > Max_Accumulated_Heat)
-		Accumulated_Heat = Max_Accumulated_Heat;
-	if (Accumulated_Heat < 0.0)
-		Accumulated_Heat = 0.0;
 
-	Heat_Status_Param = Accumulated_Heat / HeatResistance_Divider;
-	//validate 
-	if (Heat_Status_Param > 1.0)
-		Heat_Status_Param = 1.0;
-	if (Heat_Status_Param < 0.0)
-		Heat_Status_Param = 0.0;
+	Set_Accumulated_Heat(Accumulated_Heat + Damage);////////
 
 	if(Mat_Heat_Inst != nullptr)
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
@@ -227,23 +189,36 @@ void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCa
 void UHeat_Component::Heat_Lose(double damage)
 {
 
-	Accumulated_Heat = Accumulated_Heat - damage;
-	if (Accumulated_Heat < 0.0)
-		Accumulated_Heat = 0.0;
-
-	Heat_Status_Param = Heat_Status_Param - damage / HeatResistance_Divider;//* Cooling_Percent_Loss
-	//Heat_Status_Param = Heat_Status_Param - Accumulated_Heat / HeatResistance_Divider;
-	if (Heat_Status_Param < 0.0)
-		Heat_Status_Param = 0.0;
+	Set_Accumulated_Heat(Accumulated_Heat - damage);////////
 
 	if(Mat_Heat_Inst != nullptr)
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
 
 }
 //------------------------------------------------------------------------------------------------------------
-//Need to calculate if HeatResistance_Divider is changed
+//
 void UHeat_Component::Calculate_MaxHeat()
 {
-	Max_Accumulated_Heat = HeatResistance_Divider * 1.0;
+	Max_Accumulated_Heat = Heat_Divider * 1.0;
 }
 //------------------------------------------------------------------------------------------------------------
+//
+void UHeat_Component::Set_Accumulated_Heat(double value)
+{
+	Accumulated_Heat = FMath::Clamp(value, 0, Max_Accumulated_Heat);
+	Set_Heat_Status_Param(Accumulated_Heat / Heat_Divider);
+}
+//------------------------------------------------------------------------------------------------------------
+//
+void UHeat_Component::Set_Heat_Status_Param(double value)
+{
+	
+	Heat_Status_Param = FMath::Clamp(value, 0.0, 1.0);
+
+	Accumulated_Heat = Heat_Status_Param * Heat_Divider;
+
+	if(Mat_Heat_Inst != nullptr)
+		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);
+
+	OnChangeHeat_Delegate.Broadcast(Heat_Status_Param);
+}

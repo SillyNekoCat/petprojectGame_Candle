@@ -10,10 +10,10 @@
 AHeat_Actor::AHeat_Actor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = Can_Melting;
+	PrimaryActorTick.bCanEverTick = false;
 	
 	Heat_Component = CreateDefaultSubobject<UHeat_Component>(TEXT("Heat_Component"));								
-	//OnDamage_TakeDelegate.AddUObject(Heat_Component, &UHeat_Component::HeatDamage_Take);//temp old
+	
 	
 	//
 	AbilitySystem_Comp = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystem_Comp"));
@@ -34,16 +34,14 @@ void AHeat_Actor::BeginPlay()
 	{
 		// Get the UMyAttributeSet from our Ability System Component. The Ability System Component will create and register one if needed.
 		Base_AttributeSet = asc->GetSet<UBase_AttributeSet>();
-
+		//Base_AttributeSet = Cast<UBase_AttributeSet>(asc->GetAttributeSet(TSubclassOf<UBase_AttributeSet>()));
+		
 		// We now have a pointer to the new UMyAttributeSet that we can use later. If it has an initialization function, this is a good place to call it.
 	}
 
-	////почему-то после изменени€ блюпринта делегат OnCheckHeat_Delegate не срабатывает в блюпринтах, но если перезагрузить уровень то всЄ работает.
+
 	Check_HeatMelting();
 	
-	//ƒелегат уведомл€ющий об получении урона минимум дл€ Heat_Component
-	//OnDamage_TakeDelegate.AddDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
-	//Base_AttributeSet->On_Damage_Take.AddUniqueDynamic(Heat_Component, &UHeat_Component::HeatDamage_Take);
 
 	//
 	Start_ActorScale = GetActorRelativeScale3D();//GetActorScale3D();
@@ -62,7 +60,10 @@ void AHeat_Actor::BeginPlay()
 
 	//Bind timer functions
 	CheckContactDamage_Delegate.BindUFunction(this, TEXT("HeatContact_Damage"));
-
+	
+	//
+	//Base_AttributeSet->On_RecieveDamage.AddDynamic(this, &ThisClass::RecieveDamage);
+	const_cast<UBase_AttributeSet*>(Base_AttributeSet)->On_RecieveDamage.AddDynamic(this, &ThisClass::RecieveDamage);; 
 }
 //------------------------------------------------------------------------------------------------------------
 // Called every frame
@@ -235,24 +236,33 @@ void AHeat_Actor::Calculate_Melting_Scale(FVector old_scale, FRotator actor_rota
 }
 //------------------------------------------------------------------------------------------------------------
 //
+void AHeat_Actor::RecieveDamage(AActor* EffectInstigator, AActor* EffectCauser, FDamage_Info Damage_Info)
+{
+	if (Damage_Info.Fire_Damage > 0)
+	{
+		Check_HeatMelting();
+		Set_CheckContactDamage_Timer();
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+//
 void AHeat_Actor::Check_HeatMelting()
 {
 	//Cant Melting
 	if (Can_Melting == false || Heat_Component->Heat_Status_Param < Required_HeatStatus_ForMelting)
 	{
 		Is_Melting = false;
+		SetActorTickEnabled(false);
 	}
 
 	//Can Melting  
 	if (Can_Melting == true && Heat_Component->Heat_Status_Param >= Required_HeatStatus_ForMelting)
 	{
 		Is_Melting = true;
-		
+		SetActorTickEnabled(true);
 	}
 
-	OnCheckHeat_Delegate.Broadcast(Heat_Component->Heat_Status_Param);
-
-
+	//OnCheckHeat_Delegate.Broadcast(Heat_Component->Heat_Status_Param);
 }
 //------------------------------------------------------------------------------------------------------------
 //Get values of box

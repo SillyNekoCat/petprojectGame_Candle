@@ -12,7 +12,8 @@
 
 //DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamage_Take, FDamage_Inf, bool);//TEMP old
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamage_Take, FDamage_Inf, damage_info, bool, was_damage_taken);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCheck_Heat, double, heat_status);
+
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCheck_Heat, double, heat_status);//////
 class UBase_AttributeSet;
 class UAbilitySystemComponent;
 class UHeat_Component;
@@ -48,6 +49,7 @@ public:
 	UFUNCTION(BlueprintCallable) void Death();
 	UFUNCTION(BlueprintCallable) void Calculate_Melting_Scale(FVector old_scale, FRotator actor_rotation, FVector& result_melting_scale);
 	UFUNCTION(BlueprintCallable) void Check_HeatMelting();
+	UFUNCTION() void RecieveDamage(AActor* EffectInstigator, AActor* EffectCauser, FDamage_Info Damage_Info);
 	
 	FVector Get_Shape_Value(UBoxComponent* collision_comp);
 	void Correct_Collision(UBoxComponent* collision_comp, FVector scale);//Корректирует компонент коллизии после скейла в зависимости от его типа. 
@@ -67,12 +69,9 @@ public:
 	FTimerHandle CheckContactDamage_TimerHandle;
 	FTimerDelegate CheckContactDamage_Delegate;
 
-	UBoxComponent* Box_Comp; //a component found in the BP hierarchy, need for Correct_Collision
+	UBoxComponent* Box_Comp;
 
-	//UPROPERTY(BlueprintAssignable) FOnDamage_Take OnDamage_TakeDelegate;//Need for Heat_Component or level scripting
-	// 
-	//Need for level scripting or...
-	UPROPERTY(BlueprintAssignable) FOnCheck_Heat OnCheckHeat_Delegate;
+	//UPROPERTY(BlueprintAssignable) FOnCheck_Heat OnCheckHeat_Delegate;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) TSubclassOf<UGameplayEffect> GE_HeatContactDamage;
 

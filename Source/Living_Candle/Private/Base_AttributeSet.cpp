@@ -109,7 +109,7 @@ void UBase_AttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallb
 	if(DamageType_Counter >= 3)
 	{
 		DamageType_Counter = 0;
-		On_RecieveDamage.Broadcast(instigator, causer, CurrentDamage_Info);
+		On_RecieveDamage.Broadcast(instigator, causer, CurrentDamage_Info); 
 	}
 
 	//On Health changed
