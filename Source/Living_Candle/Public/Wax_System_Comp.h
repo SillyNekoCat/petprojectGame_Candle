@@ -57,10 +57,12 @@ public:
 
 	UPROPERTY(BlueprintReadOnly) const UBase_AttributeSet* Owner_BaseAttributeSet;
 	UPROPERTY(BlueprintReadOnly) UAbilitySystemComponent* Owner_ASC;
-	
+	//Increase maximum health when items ratio becomes equal Wax_Wick_Ratio. (Wax_Wick_Ratio = Wax_Items / Wick_Items)
 	UPROPERTY(BlueprintReadWrite) int Wick_Items = 0; 
+	
+	//Increase maximum health when items ratio becomes equal Wax_Wick_Ratio. (Wax_Wick_Ratio = Wax_Items / Wick_Items)
 	UPROPERTY(BlueprintReadWrite) int Wax_Items = 0; 
-
+	//a unit of this variable increases the maximum health by as much as defined in the Wax_Wick_Ratio
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick = 4.0f; 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wax_Wick_Ratio = 5.0f;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere) float Wick_Burn_Loss = 1.0f;
