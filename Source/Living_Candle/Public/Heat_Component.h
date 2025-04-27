@@ -29,7 +29,7 @@ public:
 	
 	
 
-	UFUNCTION(BlueprintCallable) void HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FGameplayTag DamageTag, float Damage, float OldValue, float NewValue);//Call from delegate when we take fire damage
+	UFUNCTION(BlueprintCallable) void HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FDamage_Info damage_info);
 	void Heat_Lose(double damage);
 
 	UFUNCTION(BlueprintCallable) void Calculate_MaxHeat();

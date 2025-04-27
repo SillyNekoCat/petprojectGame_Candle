@@ -156,26 +156,24 @@ double UHeat_Component::Calculate_HeatContactDamage(AActor *target)
 }
 //------------------------------------------------------------------------------------------------------------
 //Call when owner take fire damage
-void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FGameplayTag DamageTag, float Damage, float OldValue, float NewValue)
+void UHeat_Component::HeatDamage_Take(AActor* EffectInstigator, AActor* EffectCauser, FDamage_Info damage_info)
 {
 	if(!Can_Heat)
 		return;
 
-	//double fire_damage_taken = damage_info.Fire_Damage;
-	if( !DamageTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))) )
-		return;//continue only if damage type is fire
+	
+	//if( !DamageTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("DamageTypes.Fire"))) )
+	//	return;
 
-	double fire_damage_taken = Damage;
-	if(fire_damage_taken <= 0.0)
-	{
-		fire_damage_taken = 0.0;
+	if(damage_info.Fire_Damage == 0.0)
 		return;
-	}
+
+
 
 	GetOwner()->GetWorldTimerManager().ClearTimer(CoolingTimer_Handle);
 
 
-	Set_Accumulated_Heat(Accumulated_Heat + Damage);////////
+	Set_Accumulated_Heat(Accumulated_Heat + damage_info.Fire_Damage);////////
 
 	if(Mat_Heat_Inst != nullptr)
 		Mat_Heat_Inst->SetScalarParameterValue(FName("HeatOpacity"), Heat_Status_Param);

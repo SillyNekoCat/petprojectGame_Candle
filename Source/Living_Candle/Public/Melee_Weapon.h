@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GenericStructs.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "WeaponAttributeSet.h"
